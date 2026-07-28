@@ -1,0 +1,19 @@
+# Archivos auxiliares de LaTeX
+build/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Configuración local
+.DS_Store
+Thumbs.db
