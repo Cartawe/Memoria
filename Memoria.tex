@@ -107,7 +107,7 @@ Uno de estas arquitecturas es CRNN base-atention, la cual, combina la extracció
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/arch_transformer.png}
+    \includegraphics[width=0.4\linewidth]{images/estado del arte/arch_transformer.png}
     \caption{La arquitectura de un modelo CRNN base-attention \cite{afkari2025transformers}}
     \label{fig:arch_trans}
 \end{figure}
@@ -116,7 +116,7 @@ Los modelos visión-lenguaje (VLM, \textit{Vision-Language Models}) integran rep
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.4\linewidth]{images/estado del arte/vlm_ejem.png}
+    \includegraphics[width=0.5\linewidth]{images/estado del arte/vlm_ejem.png}
     \caption{Ilustración simplificada de la generación de COCA image-to-caption \cite{zhang2024vlmsurvey}}
     \label{fig:vlm_ejem}
 \end{figure}
@@ -125,20 +125,21 @@ La principal ventaja de este enfoque es su flexibilidad, ya que un mismo modelo 
 
 \subsubsection{Modelos utilizados para el análisis documental}
 
-Los modelos seleccionados representan distintas aproximaciones al análisis documental mediante inteligencia artificial. Para facilitar su comparación, se agrupan en tres familias: modelos visión-lenguaje de propósito general, modelos especializados en OCR y análisis documental, y modelos ultracompactos orientados a la conversión estructurada. Esta clasificación permite relacionar la arquitectura de cada modelo con su nivel de especialización, tamaño y capacidad para procesar documentos multilingües.
+Los modelos seleccionados representan distintas aproximaciones al análisis documental mediante inteligencia artificial. Para facilitar su comparación, se agrupan en dos familias: modelos visión-lenguaje de propósito general y modelos especializados en OCR y análisis documental. Esta clasificación permite relacionar la arquitectura de cada modelo con su nivel de especialización, tamaño y capacidad para procesar documentos multilingües.
 
 \paragraph{Modelos visión-lenguaje de propósito general.}
 
 Los modelos de la familia Qwen-VL fueron desarrollados para resolver tareas multimodales generales, entre las que se incluyen reconocimiento textual, comprensión de imágenes, análisis de documentos y razonamiento visual. \textbf{Qwen2-VL} introdujo un mecanismo de resolución dinámica que transforma imágenes de diferentes dimensiones en una cantidad variable de tokens visuales, evitando la necesidad de redimensionar todas las entradas a una resolución fija. Sobre esta base, Qwen2.5-VL-3B emplea aproximadamente 3 mil millones de parámetros y combina un codificador visual con un modelo de lenguaje autorregresivo, incorporando mecanismos de posicionamiento espacial que permiten conservar la relación entre texto, objetos y regiones de la imagen. La familia posee capacidades multilingües e incluye el procesamiento de texto en español, aunque su precisión documental depende de la calidad visual, la estructura de la página y la representación del idioma en los datos de entrenamiento \cite{wang2024qwen2vl}.
 
-\textbf{Qwen3-VL} amplía esta arquitectura mediante el mecanismo DeepStack, que incorpora al modelo de lenguaje características procedentes de diferentes niveles del codificador visual. Esta integración permite combinar detalles visuales locales con representaciones semánticas de mayor nivel. Asimismo, utiliza una variante mejorada de MRoPE para representar conjuntamente las dimensiones espaciales y secuenciales de la entrada. En este proyecto se considera la variante Qwen3-VL-2B, compuesta por aproximadamente 2 mil millones de parámetros. El modelo presenta capacidades multilingües para reconocimiento y comprensión visual, incluyendo el español; sin embargo, al tratarse de un VLM de propósito general, su rendimiento en transcripción y reconstrucción documental debe verificarse mediante una evaluación específica sobre los documentos de interés \cite{qwen2025qwen3vl}.
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/qwen3-vl.png}
-    \caption{Arquitectura del modelo Qwen3-VL \cite{qwen2025qwen3vl}.}
+    \includegraphics[width=0.8\linewidth]{images/estado del arte/qwen3-vl.png}
+    \caption{Arquitectura del modelo Qwen3-VL \cite{bai2025qwen3vl}.}
     \label{fig:qwen3-vl}
 \end{figure}
+
+\textbf{Qwen3-VL} amplía esta arquitectura mediante el mecanismo DeepStack, que incorpora al modelo de lenguaje características procedentes de diferentes niveles del codificador visual. Esta integración permite combinar detalles visuales locales con representaciones semánticas de mayor nivel. Asimismo, utiliza una variante mejorada de MRoPE para representar conjuntamente las dimensiones espaciales y secuenciales de la entrada. En este proyecto se considera la variante Qwen3-VL-2B, compuesta por aproximadamente 2 mil millones de parámetros. El modelo presenta capacidades multilingües para reconocimiento y comprensión visual, incluyendo el español; sin embargo, al tratarse de un VLM de propósito general, su rendimiento en transcripción y reconstrucción documental debe verificarse mediante una evaluación específica sobre los documentos de interés \cite{bai2025qwen3vl}.
+
 
 La principal ventaja de esta familia reside en su versatilidad, dado que un mismo modelo puede reconocer texto, interpretar elementos visuales y responder instrucciones sobre el contenido. No obstante, esta generalidad implica un mayor espacio de tareas y no garantiza que la transcripción documental alcance el mismo nivel de precisión que un modelo entrenado específicamente para OCR.
 
