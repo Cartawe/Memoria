@@ -3,6 +3,7 @@
 \usepackage[spanish]{babel}
 \usepackage{csquotes}
 \usepackage{geometry}
+\usepackage{amsmath}
 \geometry{a4paper, margin=1in}
 \usepackage{setspace}
 \usepackage{titling}
@@ -14,11 +15,13 @@
 \usepackage{hyperref}
 \usepackage{pgfgantt}
 \usepackage{lmodern}
+\usepackage{booktabs}
+
 \usepackage[
     backend=biber,
     style=ieee
 ]{biblatex}
-\bibliography{referencias}
+\bibliography{src/referencias}
 
 
 \begin{document}
@@ -56,173 +59,16 @@
 %error de paddle al crear caracteres fuera de UTF-8
 %Mejor solución, utilizar otro modelo para la página
 
-\section{Introducción}
+\input{src/Introduccion}
 
-En el marco de la implementación de la Ley N.º 21.180 sobre Transformación Digital del Estado, el Departamento de Tecnologías de la Información y las Comunicaciones de la Subsecretaría para las Fuerzas Armadas ha impulsado diversas iniciativas orientadas a modernizar la gestión documental institucional. Entre ellas se encuentra DocuDigital, proyecto destinado a preservar, centralizar y facilitar el acceso a la documentación histórica proveniente de las antiguas Subsecretarías de Guerra, Marina y Aviación.
+\subsection{Referencias}
+\printbibliography[heading=none]
 
-Actualmente, DocuDigital se encuentra en su segunda versión y opera como una aplicación web para la consulta y recuperación de documentos digitalizados. La plataforma dispone de mecanismos de búsqueda basados en campos descriptivos, mediante los cuales es posible localizar distintos tipos de antecedentes administrativos.
+\newpage
 
-\subsection{Problema a Resolver}
+\input{src/RequisitosSistema}
 
-DocuDigital v2 presenta limitaciones asociadas a la heterogeneidad de los procesos de digitalización utilizados por las antiguas subsecretarías. Debido a que cada organismo definió de manera independiente sus propios criterios de registro y clasificación, documentos de naturaleza equivalente pueden contener campos distintos, estructuras inconsistentes o atributos sin correspondencia directa. Esta falta de estandarización dificulta la integración de la información en un repositorio centralizado y reduce la efectividad del actual mecanismo de búsqueda.
-
-Adicionalmente, el sistema no dispone de información detallada sobre el contenido textual de los documentos digitalizados. En general, solo se conoce la categoría documental a la que pertenece cada archivo, sin contar con una descripción precisa de los antecedentes contenidos en su interior. En consecuencia, se dificulta la identificación de documentos específicos y aumenta el tiempo requerido para localizar antecedentes relevantes para la Subsecretaría para las Fuerzas Armadas.
-
-\subsection{Acercamiento a la Solución }
-
-Con el propósito de abordar las limitaciones de estandarización y recuperación de información presentes en DocuDigital v2, se está desarrollando de DocuDigital v3. Esta nueva versión conserva el acceso al repositorio histórico existente e incorporará funcionalidades para el ingreso de nuevos documentos y la ejecución de búsquedas avanzadas.
-
-Dentro de esta evolución, el presente proyecto se centra en la incorporación de un sistema de transcripción y análisis documental basado en inteligencia artificial. La solución permitirá extraer el contenido textual de los documentos digitalizados y transformarlo en información estructurada, con el fin de homogeneizar, cuando la naturaleza del documento lo permita, los campos asociados a antecedentes de una misma categoría.
-
-A partir de la información extraída, el sistema generará metadatos y descripciones de contenido que complementarán los datos actualmente disponibles. Esto permitirá mejorar los procesos de indexación y búsqueda, reducir la dependencia de campos definidos durante los antiguos procesos de digitalización y facilitar la identificación de los antecedentes contenidos en cada documento.
-
-Debido a las restricciones de infraestructura tecnológica de la institución, la implementación deberá priorizar herramientas libres y de código abierto que sean compatibles con el hardware disponible. Asimismo, la solución deberá hacer un uso eficiente de los recursos computacionales y permitir el procesamiento de un volumen elevado de documentos, sin comprometer la estabilidad ni la continuidad operacional del sistema.
-
-\subsection{Estado del Arte y de la Técnica}
-
-\subsubsection{Reconocimiento Óptico de Caracteres a la comprensión documental}
-
-El reconocimiento óptico de caracteres (OCR, \textit{Optical Character Recognition}) tiene como propósito convertir el texto presente en una imagen en una representación digital codifica y procesable por sistemas informáticos. Aunque esta definición puede sugerir una conversión directa entre píxeles y caracteres, el reconocimiento de documentos reales requiere distinguir regiones, identificar líneas o bloques, determinar el orden de lectura y reconstruir la relación entre los elementos de una página \cite{afkari2025transformers}, como se observa en la figura \ref{fig:ocr_dg}. Esta complejidad se debe a que los documentos no contienen únicamente texto continuo, sino que pueden integrar columnas, encabezados, tablas, fórmulas, figuras, sellos y anotaciones cuya posición contribuye a su significado \cite{subramani2021document}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/ocr_diagram.png}
-    \caption{Descripción general de un sistema OCR tradicional \cite{afkari2025transformers}}
-    \label{fig:ocr_dg}
-\end{figure}
-
-La comprensión documental amplía el objetivo del OCR desde la transcripción hacia la recuperación conjunta del contenido y de su estructura lógica. Bajo este enfoque, una página puede transformarse en texto plano, Markdown, HTML o una representación estructurada que conserve títulos, párrafos, tablas y relaciones espaciales. Esta distinción es relevante porque una salida puede contener la mayoría de las palabras originales y, aun así, resultar poco útil si modifica el orden de lectura, mezcla columnas o destruye la organización de una tabla \cite{neudecker2021ocreval}. Por consiguiente, la calidad de un sistema documental no debe evaluarse exclusivamente por la presencia de caracteres correctos, sino también por su capacidad para preservar la forma en que la información está organizada.
-
-El problema se vuelve más exigente en documentos escaneados, históricos o producidos bajo condiciones no controladas. El deterioro del papel, el bajo contraste, las manchas, la inclinación, las sombras y la resolución limitada alteran la apariencia de los caracteres y dificultan su separación respecto del fondo \cite{nguyen2021postocr}. Los errores generados en esta etapa se propagan hacia tareas posteriores, debido a que una fecha, un nombre o un identificador transcrito incorrectamente puede afectar la indexación, la búsqueda y la extracción automática de metadatos. En lenguas, tipografías o colecciones con pocos datos de entrenamiento, estas dificultades aumentan porque los modelos disponen de menor evidencia para representar las variaciones visuales y lingüísticas del dominio \cite{agarwal2024lowresource}.
-
-\subsubsection{Preprocesamiento de documentos}
-
-Antes de aplicar un modelo de reconocimiento, es posible reducir parte de la variabilidad visual mediante técnicas de preprocesamiento. Su finalidad no es modificar el contenido, sino facilitar la separación entre los trazos y el fondo para que el modelo reciba una entrada más uniforme. La ecualización adaptativa del histograma (AHE, Adaptive histogram equalization) mejora el contraste de manera local, lo que permite realzar regiones poco visibles sin aplicar la misma transformación a toda la página \cite{pizer1987ahe}. De forma complementaria, la binarización adaptativa calcula umbrales a partir del entorno de cada región y resulta apropiada cuando la iluminación o el color del fondo varían dentro del documento \cite{sauvola2000binarization}. Estas transformaciones no garantizan una mejora universal. Un aumento excesivo del contraste puede amplificar manchas, mientras que una binarización agresiva puede eliminar trazos finos, signos de puntuación o bordes de tablas. Por esta razón, la imagen original y cada perfil de preprocesamiento deben tratarse como configuraciones experimentales independientes, en lugar de asumir que una técnica es óptima para todas las páginas.
-
-\subsubsection{Transformadores y Modelos Visión-Lenguaje}
-
-Los sistemas OCR basados en aprendizaje profundo evolucionaron desde arquitecturas que combinaban redes convolucionales para extraer rasgos visuales y redes recurrentes para reconocer secuencias, hacia modelos fundamentados en transformadores. El mecanismo de autoatención de estas arquitecturas permite relacionar regiones distantes de una misma entrada y representar dependencias globales, lo que resulta útil cuando una línea, una columna o una celda debe interpretarse en función de otras zonas del documento \cite{afkari2025transformers}. Esta evolución también favoreció modelos generativos capaces de producir secuencias completas en lugar de clasificar caracteres de manera aislada.
-
-Uno de estas arquitecturas es CRNN base-atention, la cual, combina la extracción de características visuales de una CNN, el modelado secuencial de una RNN y el cálculo de pesos contextuales de la atención para procesar datos complejos con alta precisión. En la figura \ref{fig:arch_trans} se observa un diagrama de su arquitectura. 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.4\linewidth]{images/estado del arte/arch_transformer.png}
-    \caption{La arquitectura de un modelo CRNN base-attention \cite{afkari2025transformers}}
-    \label{fig:arch_trans}
-\end{figure}
-
-Los modelos visión-lenguaje (VLM, \textit{Vision-Language Models}) integran representaciones visuales y lingüísticas dentro de una misma arquitectura. De manera general, un componente visual transforma la imagen en representaciones internas, un mecanismo de proyección las vincula con el espacio lingüístico y un modelo de lenguaje genera la respuesta condicionada por la imagen y por las instrucciones proporcionadas \cite{zhang2024vlmsurvey}, como se observa en la figura \ref{fig:vlm_ejem}. Aplicados a documentos, estos modelos pueden recibir una página completa y generar una secuencia que combine transcripción, orden de lectura y marcado estructural, reduciendo la necesidad de conectar manualmente múltiples módulos especializados \cite{nassar2025smoldocling}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/vlm_ejem.png}
-    \caption{Ilustración simplificada de la generación de COCA image-to-caption \cite{zhang2024vlmsurvey}}
-    \label{fig:vlm_ejem}
-\end{figure}
-
-La principal ventaja de este enfoque es su flexibilidad, ya que un mismo modelo puede adaptarse mediante instrucciones a tareas de transcripción, descripción, extracción o conversión estructurada. Sin embargo, la generación lingüística también puede producir información plausible que no se encuentra respaldada por la imagen, fenómeno conocido como alucinación multimodal \cite{liu2024hallucination}. En consecuencia, una salida gramaticalmente correcta no constituye por sí sola evidencia de fidelidad documental. La validación debe realizarse mediante referencias verificadas y métricas que permitan detectar sustituciones, omisiones, contenido agregado y alteraciones estructurales.
-
-\subsubsection{Modelos utilizados para el análisis documental}
-
-Los modelos seleccionados representan distintas aproximaciones al análisis documental mediante inteligencia artificial. Para facilitar su comparación, se agrupan en dos familias: modelos visión-lenguaje de propósito general y modelos especializados en OCR y análisis documental. Esta clasificación permite relacionar la arquitectura de cada modelo con su nivel de especialización, tamaño y capacidad para procesar documentos multilingües.
-
-\paragraph{Modelos visión-lenguaje de propósito general.}
-
-Los modelos de la familia Qwen-VL fueron desarrollados para resolver tareas multimodales generales, entre las que se incluyen reconocimiento textual, comprensión de imágenes, análisis de documentos y razonamiento visual. \textbf{Qwen2-VL} introdujo un mecanismo de resolución dinámica que transforma imágenes de diferentes dimensiones en una cantidad variable de tokens visuales, evitando la necesidad de redimensionar todas las entradas a una resolución fija. Sobre esta base, Qwen2.5-VL-3B emplea aproximadamente 3 mil millones de parámetros y combina un codificador visual con un modelo de lenguaje autorregresivo, incorporando mecanismos de posicionamiento espacial que permiten conservar la relación entre texto, objetos y regiones de la imagen. La familia posee capacidades multilingües e incluye el procesamiento de texto en español, aunque su precisión documental depende de la calidad visual, la estructura de la página y la representación del idioma en los datos de entrenamiento \cite{wang2024qwen2vl}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/estado del arte/qwen3-vl.png}
-    \caption{Arquitectura del modelo Qwen3-VL \cite{bai2025qwen3vl}.}
-    \label{fig:qwen3-vl}
-\end{figure}
-
-\textbf{Qwen3-VL} amplía esta arquitectura mediante el mecanismo DeepStack, que incorpora al modelo de lenguaje características procedentes de diferentes niveles del codificador visual. Esta integración permite combinar detalles visuales locales con representaciones semánticas de mayor nivel. Asimismo, utiliza una variante mejorada de MRoPE para representar conjuntamente las dimensiones espaciales y secuenciales de la entrada. En este proyecto se considera la variante Qwen3-VL-2B, compuesta por aproximadamente 2 mil millones de parámetros. El modelo presenta capacidades multilingües para reconocimiento y comprensión visual, incluyendo el español; sin embargo, al tratarse de un VLM de propósito general, su rendimiento en transcripción y reconstrucción documental debe verificarse mediante una evaluación específica sobre los documentos de interés \cite{bai2025qwen3vl}.
-
-
-La principal ventaja de esta familia reside en su versatilidad, dado que un mismo modelo puede reconocer texto, interpretar elementos visuales y responder instrucciones sobre el contenido. No obstante, esta generalidad implica un mayor espacio de tareas y no garantiza que la transcripción documental alcance el mismo nivel de precisión que un modelo entrenado específicamente para OCR.
-
-\paragraph{Modelos especializados en OCR y análisis documental.}
-
-A diferencia de los VLM de propósito general, los modelos especializados concentran su entrenamiento y arquitectura en la extracción de texto, la recuperación del orden de lectura y la representación de elementos estructurales, como tablas, fórmulas, gráficos y sellos.
-
-\textbf{PaddleOCR-VL-1.6 }utiliza un \textit{pipeline} de dos etapas. En la primera, PP-DocLayoutV3 analiza la distribución de la página y localiza sus regiones mediante cajas delimitadoras multipunto, lo que permite tratar documentos con perspectiva, curvatura o diseños irregulares. En la segunda etapa, cada región es procesada por PaddleOCR-VL-1.6-0.9B, un modelo de aproximadamente 0,9 mil millones de parámetros que integra un codificador visual de resolución nativa, un conector MLP adaptativo y el modelo lingüístico ERNIE-4.5-0.3B. El modelo reconoce texto, tablas, fórmulas, gráficos y sellos, mientras que un módulo de posprocesamiento reorganiza las predicciones en formatos como Markdown o JSON. La familia PaddleOCR-VL admite 109 idiomas e incluye explícitamente el español, por lo que posee soporte directo para documentos escritos en este idioma \cite{zhang2026paddleocrvl}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/paddle.png}
-    \caption{Visión general del \textit{pipeline} PaddleOCR-VL-1.6 \cite{zhang2026paddleocrvl}.}
-    \label{fig:paddle}
-\end{figure}
-
-\textbf{DeepSeek-OCR 2} emplea una arquitectura codificador--decodificador orientada a modelar el orden semántico de los documentos. Su componente DeepEncoder V2 combina un codificador visual compacto, atención bidireccional y consultas causales que reorganizan los tokens visuales antes de entregarlos al modelo de lenguaje. De esta manera, el procesamiento no queda restringido a un recorrido espacial fijo de izquierda a derecha y de arriba hacia abajo, sino que puede adaptarse a la estructura lógica de la página. Las representaciones obtenidas se entregan a un decodificador DeepSeek de 3 mil millones de parámetros con arquitectura \textit{Mixture-of-Experts}, encargado de generar autorregresivamente la transcripción o representación estructurada. El modelo se describe como multilingüe; sin embargo, el artículo no presenta una evaluación independiente para español, por lo que su desempeño en este idioma debe determinarse experimentalmente \cite{wei2026deepseekocr2}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/deepseek-ocr2.png}
-    \caption{Arquitectura del modelo DeepSeek-OCR 2 \cite{wei2026deepseekocr2}.}
-    \label{fig:deepseek}
-\end{figure}
-
-\textbf{LightOnOCR-2-1B }adopta un enfoque completamente \textit{end-to-end}, mediante el cual una página documental se transforma directamente en una secuencia textual estructurada sin ejecutar módulos independientes de detección, reconocimiento y reconstrucción del orden de lectura. El modelo posee aproximadamente 1.000 millones de parámetros y combina un codificador visual de resolución nativa inicializado desde Mistral-Small-3.1, un proyector multimodal que reduce en cuatro veces el número de tokens visuales mediante agrupación espacial, y un decodificador Qwen3 que genera la transcripción de forma autorregresiva. Su entrenamiento prioriza documentos escaneados, publicaciones científicas y lenguas europeas, con especial énfasis en francés. Por esta razón, el modelo dispone de capacidad para procesar texto en español por su base multilingüe y su cobertura de lenguas europeas, aunque el artículo no informa resultados específicos para este idioma \cite{taghadouini2026lightonocr}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{images/estado del arte/lightOnOcr.png}
-    \caption{Arquitectura del modelo LightOnOCR-2-1B \cite{taghadouini2026lightonocr}.}
-    \label{fig:light}
-\end{figure}
-
-Aunque estos modelos comparten la especialización documental, difieren en su estrategia de procesamiento. PaddleOCR-VL separa el análisis de diseño y el reconocimiento de regiones; DeepSeek-OCR 2 introduce una reorganización causal de las representaciones visuales; y LightOnOCR realiza la conversión completa mediante una única arquitectura generativa. Estas diferencias pueden afectar la precisión, el consumo de recursos y la estabilidad frente a páginas degradadas o con estructuras complejas.
-
-\paragraph{Modelos ultracompactos para conversión documental estructurada.}
-
-\textbf{SmolDocling} está orientado a la conversión integral de documentos mediante una arquitectura visión-lenguaje ultracompacta de 256 millones de parámetros. El modelo se basa en SmolVLM-256M y utiliza un codificador visual SigLIP de 93 millones de parámetros, un mecanismo de proyección y agrupación que comprime las características visuales, y un modelo de lenguaje SmolLM2 de 135 millones de parámetros. A partir de la imagen de una página, genera autorregresivamente una secuencia en formato DocTags, representación que codifica el contenido, el tipo y la ubicación de elementos como párrafos, encabezados, tablas, fórmulas, gráficos, código, imágenes y listas. De esta manera, el modelo integra reconocimiento textual, análisis de diseño y reconstrucción estructural en una única salida \cite{nassar2025smoldocling}.
-
-SmolDocling fue entrenado con conjuntos documentales heterogéneos y utiliza componentes lingüísticos con capacidad multilingüe. No obstante, su artículo no declara soporte específico ni resultados diferenciados para español. En consecuencia, su aplicación a documentos en este idioma debe considerarse técnicamente posible, pero requiere validación experimental antes de afirmar una compatibilidad equivalente a la documentada para PaddleOCR-VL \cite{nassar2025smoldocling}.
-
-La coexistencia de modelos generales, especializados y ultracompactos impide seleccionar una alternativa únicamente por su tamaño o arquitectura. Los modelos generales ofrecen mayor flexibilidad semántica, los especializados priorizan la fidelidad de la extracción documental y los ultracompactos reducen los requerimientos de ejecución. Por ello, su comparación debe realizarse mediante un protocolo común que considere precisión textual, conservación de la estructura, soporte efectivo del español, tiempo de procesamiento y consumo de recursos.
-
-% \printbibliography[title={\large 1.4. Referencias}]
-
-
-% Handwritten Optical Character Recognition (OCR): A Comprehensive Systematic Literature Review (SLR) (2020)
-%   https://ieeexplore.ieee.org/document/9151144
-
-% Systematic Literature Review of Machine Learning Models and Applications for Text Recognition(2025)
-%   https://ieeexplore.ieee.org/document/11193825#full-text-header
-
-% Handwritten Text Recognition: A Survey (2026)
-%   https://ieeexplore.ieee.org/document/11303599
-
-% https://dl.acm.org/doi/full/10.1145/3771273
-
-Respecto a trabajos de la misma indole
-
-\section{Requisitos del Sistema}
-
-
-
-\subsection{Requisitos Funcionales}
-
-\subsection{Requisitos No Funcionales}
-
-\subsection{Requisitos Ambientales}
-
-\subsubsection{Hardware de Desarrollo}
-
-\subsubsection{Software de Desarrollo}
-
-\section{Planificación del Proyecto}
-
-\subsection{Objetivo General}
-
-\subsection{Objetivos Especificos}
-
-\subsection{Hitos y Actividades}
-
-\subsection{Carta Gantt}
+\input{src/PlaniProyecto.tex}
 
 
 \section{Arquitectura del Sistema}

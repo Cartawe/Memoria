@@ -1,0 +1,104 @@
+\section{Requisitos del Sistema}
+
+%Los requisitos del sistema se derivan de las dificultades de estandarización, descripción y recuperación de la documentación histórica institucional. Su formulación corresponde a una etapa previa al diseño de la solución, por lo que establece las capacidades esperadas y las condiciones generales de operación sin definir componentes, tecnologías o mecanismos de implementación.
+
+\subsection{Requisitos Funcionales}
+
+\begin{enumerate}
+
+    \item[\textbf{RF-01}] El sistema deberá permitir obtener el contenido textual
+    presente en documentos digitalizados.
+
+    \item[\textbf{RF-02}] El sistema deberá conservar, cuando la naturaleza del
+    documento lo permita, el orden de lectura y la organización lógica de elementos
+    como títulos, párrafos, columnas y tablas.
+
+    \item[\textbf{RF-03}] El sistema deberá transformar la información recuperada
+    en una representación procesable que permita identificar el contenido de cada
+    documento.
+
+    \item[\textbf{RF-04}] El sistema deberá generar información complementaria,
+    como metadatos y descripciones de contenido, que apoye la homogeneización,
+    indexación y búsqueda de los documentos.
+
+    \item[\textbf{RF-05}] El sistema deberá admitir el análisis de documentos con
+    diferentes estructuras, condiciones de digitalización y niveles de degradación
+    visual.
+
+    \item[\textbf{RF-06}] El proyecto deberá permitir comparar distintas
+    alternativas de procesamiento documental mediante documentos representativos
+    y criterios comunes de evaluación.
+
+\end{enumerate}
+
+\subsection{Requisitos No Funcionales}
+
+\begin{enumerate}
+
+    \item[\textbf{RNF-01}] La información generada deberá mantener fidelidad
+    respecto del documento original, minimizando sustituciones, omisiones,
+    incorporaciones de contenido y alteraciones estructurales.
+
+    \item[\textbf{RNF-02}] La solución deberá utilizar eficientemente la capacidad
+    de procesamiento y memoria disponible en la infraestructura institucional.
+
+    \item[\textbf{RNF-03}] El sistema deberá permitir el procesamiento de un
+    volumen elevado de documentos sin comprometer su estabilidad ni la continuidad
+    operacional.
+
+    \item[\textbf{RNF-04}] La implementación deberá priorizar herramientas libres
+    y de código abierto que puedan ejecutarse dentro de la infraestructura
+    institucional.
+
+    \item[\textbf{RNF-05}] La selección de la alternativa de procesamiento deberá
+    considerar conjuntamente la fidelidad de los resultados, el tiempo de
+    procesamiento, el consumo de recursos y la estabilidad de ejecución.
+
+    \item[\textbf{RNF-06}] Las comparaciones experimentales deberán ser
+    reproducibles y mantener condiciones equivalentes para los documentos,
+    configuraciones y recursos evaluados.
+
+\end{enumerate}
+
+\subsection{Requisitos Ambientales}
+
+% Los requisitos ambientales describen las condiciones generales que deberá satisfacer el entorno de ejecución. Las capacidades mínimas definitivas deberán determinarse posteriormente mediante la evaluación experimental de las alternativas consideradas.
+
+\subsubsection{Hardware}
+
+\begin{enumerate}
+
+    \item[\textbf{RA-H01}] La solución deberá poder ejecutarse utilizando la
+    infraestructura computacional disponible en la institución, caracterizada por
+    una capacidad limitada de procesamiento y memoria.
+
+    \item[\textbf{RA-H02}] El sistema no deberá depender obligatoriamente de
+    hardware especializado que no se encuentre disponible en el entorno
+    institucional.
+
+    \item[\textbf{RA-H03}] El entorno deberá disponer de capacidad suficiente para
+    almacenar los documentos de entrada, los modelos de procesamiento y los
+    resultados generados.
+
+\end{enumerate}
+
+\subsubsection{Software}
+
+\begin{enumerate}
+
+    \item[\textbf{RA-S01}] El entorno deberá admitir herramientas de procesamiento
+    de imágenes, reconocimiento textual y análisis de estructura documental.
+
+    \item[\textbf{RA-S02}] Las herramientas seleccionadas deberán ser compatibles
+    con el sistema operativo y el hardware disponible en la institución.
+
+    \item[\textbf{RA-S03}] El entorno deberá permitir la ejecución local de los
+    modelos y mecanismos de procesamiento seleccionados.
+
+    \item[\textbf{RA-S04}] El entorno de evaluación deberá permitir registrar y
+    comparar la calidad de los resultados, los tiempos de ejecución y el consumo
+    de recursos de cada alternativa.
+
+    \item[\textbf{RA-S05}] Se deben ocupar herramientas de desarrollo utilizadas por el equipo de desarrollo de la institución.
+
+\end{enumerate}
