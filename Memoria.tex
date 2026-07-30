@@ -16,12 +16,49 @@
 \usepackage{pgfgantt}
 \usepackage{lmodern}
 \usepackage{booktabs}
-
+\usepackage{ragged2e}
+\usepackage{tabularx}
 \usepackage[
     backend=biber,
     style=ieee
 ]{biblatex}
 \bibliography{src/referencias}
+\usepackage{enumitem}
+\usepackage{needspace}
+
+\newenvironment{definicionmodulo}
+{
+    \begin{description}[
+        style=multiline,
+        leftmargin=3.5cm,
+        labelwidth=3cm,
+        labelsep=0.5cm,
+        align=left,
+        font=\bfseries,
+        itemsep=0.9em,
+        parsep=0pt,
+        topsep=0.5em
+    ]
+}
+{
+    \end{description}
+}
+
+\newlist{elementosmodulo}{itemize}{1}
+\setlist[elementosmodulo]{
+    label=--,
+    leftmargin=1.2em,
+    itemsep=0.25em,
+    parsep=0pt,
+    topsep=0.35em
+}
+
+
+
+
+\addto\captionsspanish{%
+    \renewcommand{\tablename}{Tabla}
+}
 
 
 \begin{document}
@@ -43,7 +80,7 @@
     
     \large\textbf{Cristóbal Díaz Vilches} \\ [2.5cm]
 
-    \large\textbf{Fecha:} 06-07-2026 \\
+    \large\textbf{Fecha:} 30-07-2026 \\
     \large\textbf{Versión:} 1.0 \\
 
     \vfill
@@ -68,30 +105,14 @@
 
 \input{src/RequisitosSistema}
 
-\input{src/PlaniProyecto.tex}
+\input{src/PlaniProyecto}
 
+\input{src/Arquitectura}
 
-\section{Arquitectura del Sistema}
+\input{src/Modulos}
 
-\subsection{Diagrama de Contexto}
+\input{src/Riesgos}
 
-\subsection{Diagrama de Arquitectura}
-
-\subsection{Enumeración de Módulos}
-
-\subsection{Matriz de Requisitos Funcionales y Módulos}
-
-\section{Módulos}
-
-
-\section{Gestión de Riesgos}
-\subsection{Supuestos}
-
-\subsection{Dependencias}
-
-\subsection{Restricciones}
-
-\subsection{Riesgos}
 
 
 

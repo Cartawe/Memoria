@@ -1,0 +1,585 @@
+\section{Módulos}
+\label{sec:modulos}
+
+Los módulos M1 a M4 y M8 forman parte del Sistema Coordinador, mientras que los módulos M5 a M7 corresponden a las funciones proporcionadas por OCR Server. Su interacción permite seleccionar documentos almacenados en MySQL, administrar su procesamiento, ejecutar la transcripción y conservar los resultados obtenidos.
+
+
+% ============================================================
+% MÓDULO M1
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Portal Web y Control de Acceso (M1)}
+\label{subsec:modulo_m1}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Portal Web y Control de Acceso constituye el punto de interacción entre los usuarios y el Sistema Coordinador. Su propósito es proporcionar una interfaz protegida para consultar los servicios disponibles, seleccionar información almacenada en MySQL, iniciar tareas de procesamiento documental y revisar su estado. También debe asegurar que únicamente los usuarios autorizados puedan acceder a las funciones internas de la aplicación.
+
+\item[Alcance] El módulo comprende la vista de ingreso, la vista principal, la selección de bases de datos y tablas, la configuración del procesamiento, la lista de tareas y el detalle de cada tarea. Incluye la creación y conservación de la sesión, la protección de las rutas internas, la presentación del estado de MySQL y OCR Server y la navegación entre las distintas vistas del portal. No ejecuta directamente consultas estructurales complejas, tareas OCR ni escrituras sobre los datos institucionales.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Servicio MySQL, utilizado para autenticar al usuario y validar que posea permisos administrativos.
+    \item Módulo Catálogo Estructural MySQL, utilizado para presentar las bases de datos, tablas y columnas disponibles.
+    \item Módulo Preparación de Lotes Documentales, encargado de validar la selección realizada por el usuario.
+    \item Módulo Gestión y Orquestación de Tareas, utilizado para crear y consultar las tareas.
+    \item Módulo API de Integración con OCR Server, utilizado para consultar la disponibilidad del servicio OCR.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item El usuario dispone de credenciales válidas para el servidor MySQL seleccionado.
+    \item Las credenciales utilizadas poseen permisos administrativos suficientes para operar sobre las bases de datos autorizadas.
+    \item El estado de MySQL y OCR Server puede ser consultado desde el back end.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item La vista de ingreso será la única vista accesible sin una sesión válida.
+    \item Todo intento de acceder directamente a una ruta interna deberá redirigir al usuario hacia la vista de ingreso.
+    \item Las acciones de procesamiento deberán bloquear envíos repetidos mientras se crea una tarea.
+    \item Los mensajes mostrados al usuario deberán ser comprensibles sin eliminar la información técnica necesaria para el diagnóstico.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe las acciones realizadas por el usuario, las comunica al back end y presenta las respuestas obtenidas desde los demás módulos del sistema.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Credenciales del usuario.
+    \item Acciones de navegación y selección de vistas.
+    \item Base de datos, tabla y parámetros de procesamiento seleccionados.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Validación de los campos ingresados por el usuario.
+    \item Solicitud de autenticación al back end.
+    \item Creación y validación de la sesión.
+    \item Protección de las rutas internas.
+    \item Solicitud de información a los módulos del Sistema Coordinador.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Sesión autenticada o mensaje de rechazo.
+    \item Vistas del portal con la información disponible.
+    \item Solicitud de creación de una tarea.
+    \item Estado, progreso y resultados de las tareas.
+    \item Información general de MySQL y OCR Server.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M2
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Catálogo Estructural MySQL (M2)}
+\label{subsec:modulo_m2}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Catálogo Estructural MySQL tiene como propósito mantener una representación local de la estructura de uno o varios servicios MySQL. Esta representación permite conocer las bases de datos, tablas, columnas y relaciones disponibles sin inspeccionar nuevamente toda la estructura en cada operación. También facilita detectar cambios y distinguir las tablas externas de aquellas creadas o administradas por la aplicación.
+
+\item[Alcance] El módulo registra estructuralmente servidores MySQL. Para cada elemento conserva su identificación, estado de sincronización y fecha de actualización. En el caso de las tablas, también puede registrar su origen, aplicación propietaria y huella estructural. El catálogo se almacena en SQLite y contiene solamente metadatos; los registros documentales permanecen en MySQL.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Permisos para consultar los metadatos estructurales de MySQL.
+    \item Base de datos SQLite utilizada como almacenamiento local.
+    \item Módulo Portal Web y Control de Acceso, desde el cual se solicitan los datos del catálogo.
+    \item Módulo Persistencia y Trazabilidad, que informa la creación de estructuras administradas por la aplicación.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item Cada base de datos puede identificarse mediante su servidor y nombre.
+    \item Cada tabla puede identificarse mediante el servidor, la base de datos y su nombre.
+    \item El usuario autenticado dispone de permisos para consultar la estructura de las bases de datos autorizadas.
+    \item SQLite se encuentra disponible localmente para el Sistema Coordinador.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item SQLite no deberá almacenar los registros de negocio ni el contenido documental de las tablas MySQL.
+    \item La sincronización no deberá modificar la estructura real de MySQL.
+    \item La identificación de tablas creadas por la aplicación deberá priorizar el registro explícito de propiedad por sobre el nombre de la tabla.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo consulta los metadatos de MySQL, los compara con el catálogo almacenado en SQLite y actualiza la representación local de la estructura disponible.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Identificación y parámetros de conexión del servidor MySQL.
+    \item Metadatos de bases de datos, tablas, columnas, restricciones, índices y claves foráneas.
+    \item Catálogo estructural previamente almacenado en SQLite.
+    \item Información sobre tablas creadas o administradas por la aplicación.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Descubrimiento de las bases de datos accesibles.
+    \item Lectura de tablas y elementos estructurales.
+    \item Comparación entre la estructura real de MySQL y el catálogo local.
+    \item Registro de elementos nuevos y actualización de elementos modificados.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Catálogo estructural actualizado.
+    \item Bases de datos y tablas disponibles para el procesamiento.
+    \item Columnas candidatas a contener documentos.
+    \item Claves primarias y relaciones detectadas.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M3
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Preparación de Lotes Documentales (M3)}
+\label{subsec:modulo_m3}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Preparación de Lotes Documentales tiene como propósito transformar la selección realizada por el usuario en un conjunto de registros claramente definido y apto para ser procesado.
+
+\item[Alcance] El módulo comprende la selección del servidor MySQL, base de datos, tabla, clave primaria, columna que contiene el documento y rango de registros. También valida la disponibilidad de los registros, determina la cantidad efectiva de documentos y genera la configuración que será utilizada para crear una tarea. La columna documental puede contener el archivo codificado, una ruta, una URL o un identificador que permita recuperar el documento.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Módulo Portal Web y Control de Acceso, desde el cual se recibe la selección del usuario.
+    \item Módulo Catálogo Estructural MySQL, utilizado para conocer la estructura y compatibilidad de la tabla.
+    \item Servicio MySQL, utilizado para comprobar los registros disponibles.
+    \item Módulo Gestión y Orquestación de Tareas, encargado de registrar el lote como una tarea.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item La tabla seleccionada posee una clave primaria identificable.
+    \item Existe al menos una columna capaz de proporcionar el documento o una referencia para recuperarlo.
+    \item Los valores de la clave primaria permiten delimitar el conjunto de registros.
+    \item El usuario posee permisos para consultar los registros incluidos en el lote.
+    \item Los documentos seleccionados pueden ser recuperados por el Sistema Coordinador.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item No se podrá crear un lote sin seleccionar una tabla y una columna documental.
+    \item El módulo no ejecutará inferencia ni almacenará directamente los resultados OCR.
+    \item Las consultas sobre MySQL deberán limitarse a los datos necesarios para construir el lote.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo valida la configuración definida por el usuario, consulta los registros que cumplen los criterios y construye una descripción reproducible del lote documental.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Servidor, base de datos y tabla seleccionados.
+    \item Columna que contiene el documento o su referencia.
+    \item Clave primaria identificada.
+    \item Cantidad de filas.
+    \item Identificador inicial e identificador final.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Verificación de la existencia y compatibilidad de la tabla.
+    \item Validación de la columna documental y de la clave primaria.
+    \item Comprobación del rango solicitado.
+    \item Construcción de las referencias individuales de cada documento.
+    \item Generación de la configuración del lote.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Configuración validada del lote documental.
+    \item Cantidad efectiva de registros que serán procesados.
+    \item Perfil de procesamiento asociado.
+    \item Mensaje de rechazo cuando la configuración no sea válida.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M4
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Gestión y Orquestación Distribuida de Tareas (M4)}
+\label{subsec:modulo_m4}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Gestión y Orquestación Distribuida de Tareas tiene como propósito controlar el ciclo de vida de los procesamientos documentales y distribuir su ejecución entre uno o más OCR Server disponibles. Mantiene la relación entre cada tarea, los documentos que la componen, el servidor asignado, el modelo utilizado y los resultados obtenidos. Su función principal es permitir que grandes cantidades de documentos sean procesadas de manera controlada, paralela y trazable, sin depender de una única instancia de procesamiento.
+
+\item[Alcance] El módulo comprende la creación y planificación de tareas, la división de los lotes en elementos individuales, el registro de los OCR Server disponibles, la asignación de documentos, la actualización del progreso, el manejo de errores, la cancelación y el reprocesamiento. Cada documento puede asignarse a un servidor diferente según su disponibilidad, modelo activo, compatibilidad y carga de trabajo. El módulo también conserva el historial de asignaciones para determinar qué servidor y modelo participaron en cada ejecución.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Módulo Preparación de Lotes Documentales, que entrega la configuración validada y los registros que deben procesarse.
+    \item Módulo de Integración con OCR Servers, utilizado para consultar los servicios disponibles, enviar documentos y recibir respuestas.
+    \item Módulo Persistencia y Trazabilidad, utilizado para almacenar estados, asignaciones, resultados y errores.
+    \item Información de disponibilidad, estado, modelo activo y capacidades entregada por cada OCR Server.
+    \item Almacenamiento persistente utilizado para conservar las tareas y recuperar su ejecución después de una interrupción.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item Cada tarea y cada elemento de procesamiento poseen identificadores únicos.
+    \item Cada OCR Server puede identificarse de forma inequívoca mediante un identificador y su dirección de servicio.
+    \item Los OCR Server informan su disponibilidad, estado operativo, modelo activo y resultado de cada solicitud.
+    \item Los distintos OCR Server pueden disponer de modelos, configuraciones y capacidades de procesamiento diferentes.
+    \item Una tarea puede continuar aunque uno de sus documentos o uno de los OCR Server presente una falla.
+    \item El estado persistido permite recuperar las tareas y sus asignaciones después de una interrupción del Sistema Coordinador.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item La asignación deberá respetar la capacidad y el nivel de concurrencia informado por cada OCR Server.
+    \item Cuando un OCR Server opere de manera serial, no se le deberá enviar una nueva solicitud mientras mantenga otra ejecución activa.
+    \item Un mismo elemento documental no deberá ejecutarse simultáneamente en más de un OCR Server.
+    \item La caída de un OCR Server no deberá provocar la pérdida de la tarea completa ni de los resultados obtenidos previamente.
+    \item Los reintentos y reasignaciones deberán poseer un límite definido para evitar ciclos de ejecución indefinidos.
+    \item Las transiciones de estado y los cambios de servidor deberán quedar registrados para mantener la trazabilidad.
+    \item La cancelación de una tarea no deberá eliminar los resultados obtenidos antes de la solicitud.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe un lote documental validado, registra una tarea, obtiene el estado de los OCR Server y distribuye sus documentos entre las instancias compatibles. Durante la ejecución supervisa cada asignación, actualiza el progreso y reasigna los elementos pendientes cuando un servidor deja de estar disponible.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Configuración del lote documental.
+    \item Lista de documentos o registros que deben procesarse.
+    \item Registro de OCR Server disponibles.
+    \item Estado, capacidad, carga y modelos disponibles en cada OCR Server.
+    \item Solicitudes de cancelación, actualización, reintento o reprocesamiento.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Creación de la tarea y de sus elementos individuales de procesamiento.
+    \item Selección del siguiente documento pendiente.
+    \item Selección del OCR Server disponible más adecuado según compatibilidad, carga y capacidad.
+    \item Reserva temporal del documento para evitar asignaciones duplicadas.
+    \item Envío del documento mediante la interfaz del OCR Server seleccionado.
+    \item Registro del servidor, modelo, fecha y parámetros utilizados en la ejecución.
+    \item Recepción de resultados, tiempos y errores.
+    \item Liberación del OCR Server para recibir una nueva asignación.
+    \item Reasignación de documentos cuando un servidor falle o deje de responder.
+    \item Aplicación de reprocesamientos autorizados.
+    \item Actualización del progreso y cálculo del estado final de la tarea.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Identificador único de la tarea.
+    \item Estado general de la tarea y estado individual de cada documento.
+    \item Asignación de documentos a los OCR Server disponibles.
+    \item Porcentaje y cantidad de registros pendientes, en ejecución, completados y fallidos.
+    \item Registro del OCR Server y modelo utilizados en cada procesamiento.
+    \item Resumen de resultados, tiempos y errores.
+    \item Información disponible para la lista y el detalle de tareas.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M5
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: API de Integración con OCR Server (M5)}
+\label{subsec:modulo_m5}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo API de Integración con OCR Server proporciona el contrato de comunicación entre el Sistema Coordinador y el servicio especializado de procesamiento documental. Su propósito es ocultar la complejidad interna de OCR Server y ofrecer operaciones controladas para consultar su estado, administrar modelos, acceder a información de diagnóstico y enviar imágenes o documentos PDF.
+
+\item[Alcance] El módulo comprende la consulta del estado del servicio, el listado de modelos, la activación o cambio del modelo, la recuperación de logs y el procesamiento de imágenes y PDF. Recibe solicitudes HTTP mediante datos JSON o archivos multipart, crea copias temporales cuando corresponde y devuelve una respuesta normalizada con el resultado, los metadatos de ejecución o el error producido.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Módulo Gestión y Orquestación de Tareas, que genera las solicitudes de procesamiento.
+    \item Componente \texttt{OcrServer.Api}, encargado de exponer la interfaz \\ HTTP.
+    \item Daemon de OCR Server, encargado de ejecutar los comandos.
+    \item Unix Domain Socket utilizado para comunicar la API con el daemon.
+    \item Directorios de cargas temporales, resultados y logs.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item El daemon y su socket interno se encuentran disponibles en el servidor OCR.
+    \item Los endpoints y contratos de respuesta son conocidos por el Sistema Coordinador. Posee conectividad a ellos.
+    \item Los documentos enviados cumplen los límites de formato y tamaño establecidos.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item La API deberá ser el único punto de acceso remoto hacia OCR Server.
+    \item Los documentos cargados deberán almacenarse en rutas temporales controladas.
+    \item Las solicitudes deberán contemplar tiempos máximos de espera y cancelación.
+    \item Los errores internos deberán traducirse a respuestas interpretables por el Sistema Coordinador.
+    \item Los archivos temporales no deberán conservarse indefinidamente.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe una solicitud del Sistema Coordinador, la transforma en un comando interno para el daemon y devuelve la respuesta obtenida desde OCR Server.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Solicitudes HTTP de estado, modelos, configuración o logs.
+    \item Imagen o archivo PDF enviado mediante una solicitud multipart.
+    \item Identificación del modelo o acción administrativa solicitada.
+    \item Parámetros de salida y control de la operación.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Validación de la solicitud HTTP.
+    \item Almacenamiento temporal del documento recibido.
+    \item Construcción del comando interno.
+    \item Envío del comando al daemon mediante HTTP sobre Unix Domain Socket.
+    \item Lectura del archivo JSON generado.
+    \item Eliminación de la carga temporal.
+    \item Conversión del resultado interno a una respuesta HTTP.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Estado operativo de OCR Server.
+    \item Lista de modelos y modelo activo.
+    \item Confirmación de operaciones administrativas.
+    \item Resultado OCR estructurado.
+    \item Códigos de estado, mensajes y antecedentes de error.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M6
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Administración del Servicio OCR (M6)}
+\label{subsec:modulo_m6}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Administración del Servicio OCR constituye el núcleo operativo de OCR Server. Su propósito es mantener el estado global del servicio, controlar el ciclo de vida de los modelos, serializar las operaciones y coordinar los componentes responsables de la inferencia, el registro de logs y la limpieza de archivos temporales.
+
+\item[Alcance] El módulo comprende la recepción y distribución de comandos, la carga y descarga de modelos, el cambio de la sesión activa, la consulta del estado, la supervisión de los procesos externos y la recarga de configuraciones. Mantiene en memoria el modelo activo, el estado actual, la fecha del último cambio y el último error registrado.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item API y CLI de OCR Server, que envían comandos al daemon.
+    \item Registro de modelos y archivos \texttt{configuration.json}.
+    \item Procesos de inferencia \texttt{llama-server}.
+    \item Sistema de archivos utilizado para configuraciones, sockets, logs, cargas y resultados.
+    \item Módulo Procesamiento e Inferencia Documental.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item Cada modelo posee un identificador único y una configuración válida.
+    \item Los ejecutables y archivos declarados en la configuración se encuentran disponibles.
+    \item Los puertos y sockets requeridos no están ocupados por otros procesos.
+    \item El hardware dispone de memoria y capacidad suficientes para cargar el modelo solicitado.
+    \item Los procesos de inferencia proporcionan mecanismos de comprobación de disponibilidad.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item Solo podrá existir una sesión de modelo activa por daemon.
+    \item Las operaciones de ciclo de vida y procesamiento deberán ejecutarse bajo exclusión mutua.
+    \item La comunicación interna deberá utilizar canales locales y no exponerse directamente a la red.
+    \item Los procesos externos deberán detenerse de manera controlada cuando se cambie o descargue un modelo.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe comandos internos, valida el estado del servicio, ejecuta la operación solicitada y actualiza el estado compartido de OCR Server.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Comandos de estado, activación, detención, cambio de modelo y recarga de configuración.
+    \item Solicitudes de procesamiento documental.
+    \item Solicitudes de consulta de logs y diagnóstico.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Validación del comando y del estado actual.
+    \item Descubrimiento y carga de la configuración del modelo.
+    \item Inicio, supervisión o detención de los procesos de inferencia.
+    \item Actualización del modelo activo y del estado del daemon.
+    \item Coordinación del procesamiento y las tareas de mantenimiento.
+    \item Registro de mensajes y errores operativos.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Estado actualizado del daemon.
+    \item Confirmación o rechazo del comando.
+    \item Información de diagnóstico y logs.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M7
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Procesamiento e Inferencia Documental (M7)}
+\label{subsec:modulo_m7}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Procesamiento e Inferencia Documental tiene como propósito transformar imágenes y documentos PDF en una representación textual y estructurada. Para ello normaliza los archivos de entrada, ejecuta el modelo activo sobre cada página y consolida los resultados en un archivo procesable por el Sistema Coordinador.
+
+\item[Alcance] El módulo admite imágenes y documentos PDF. Los PDF son renderizados y procesados página por página. Según la configuración seleccionada, la inferencia puede ejecutarse directamente mediante un modelo cuantisado y operativo por \texttt{llama-server}. El resultado puede incluir contenido Markdown, datos por página, tiempos de ejecución, modelo utilizado, motivo de finalización y errores.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Módulo Administración del Servicio OCR, encargado de proporcionar una sesión de modelo activa.
+    \item Componente de procesamiento documental y normalización de archivos.
+    \item Cliente de \texttt{llama-server}.
+    \item Herramientas para renderizar documentos PDF.
+    \item Directorios temporales y de salida.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item El documento recibido existe y puede ser leído por el servicio.
+    \item El formato del archivo es compatible con el procesador documental.
+    \item Existe un modelo activo y disponible antes de comenzar la inferencia.
+    \item La configuración del modelo define correctamente el servidor y el payload.
+    \item El directorio de salida permite crear el archivo de resultado.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item El procesamiento deberá respetar la ejecución serial establecida por el daemon.
+    \item Los PDF deberán procesarse página por página para controlar el uso de recursos.
+    \item Los archivos temporales deberán permanecer aislados y eliminarse después de la operación.
+    \item La configuración utilizada deberá ser compatible con el modelo y con la versión de las herramientas instaladas.
+    \item El procesamiento deberá mantenerse dentro de los límites de memoria, contexto y tiempo definidos para el servidor.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe la ruta del documento y la configuración activa, prepara cada página, ejecuta la inferencia y persiste un resultado consolidado.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Ruta local de una imagen o documento PDF.
+    \item Identificador y configuración del modelo activo.
+    \item Prompt y parámetros de inferencia.
+    \item Ruta de salida.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Validación del archivo de entrada.
+    \item Normalización de la imagen o renderización de las páginas del PDF.
+    \item Envío de cada página al motor de inferencia.
+    \item Recepción y validación del contenido generado.
+    \item Consolidación de los resultados por página.
+    \item Cálculo de tiempos y metadatos de ejecución.
+    \item Eliminación de los archivos temporales.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Texto reconocido en formato Markdown.
+    \item Resultado individual de cada página.
+    \item Nombre del modelo utilizado.
+    \item Tiempo total de procesamiento.
+    \item Motivo de finalización de la inferencia.
+    \item Errores de lectura, preparación o inferencia.
+\end{elementosmodulo}
+
+\end{definicionmodulo}
+
+
+% ============================================================
+% MÓDULO M8
+% ============================================================
+
+\Needspace{8\baselineskip}
+\subsection{Definición del Módulo: Persistencia y Trazabilidad de Resultados (M8)}
+\label{subsec:modulo_m8}
+
+\begin{definicionmodulo}
+
+\item[Propósito] El módulo Persistencia y Trazabilidad de Resultados tiene como propósito conservar los productos generados por OCR Server y relacionarlos de manera inequívoca con el servidor, base de datos, tabla, registro y documento de origen. Además, mantiene los antecedentes necesarios para conocer qué modelo fue utilizado, cuándo se realizó el procesamiento y cuál fue su resultado.
+
+\item[Alcance] El módulo valida las respuestas obtenidas desde OCR Server, actualiza el estado de las tareas y registra la transcripción, los metadatos y los errores correspondientes. Puede actualizar una estructura autorizada o crear tablas administradas por la aplicación, siempre que se conserve la información original. También mantiene la relación entre una ejecución inicial y sus posteriores reprocesamientos.
+
+\item[Dependencias]
+\begin{elementosmodulo}
+    \item Módulo Gestión y Orquestación de Tareas, que proporciona la identificación de la tarea y del registro.
+    \item Resultado generado por el módulo Procesamiento e Inferencia Documental.
+    \item Módulo Catálogo Estructural MySQL, utilizado para validar y registrar las estructuras de destino.
+    \item Servicio MySQL institucional.
+    \item Permisos administrativos para crear o modificar las estructuras autorizadas.
+\end{elementosmodulo}
+
+\item[Supuestos]
+\begin{elementosmodulo}
+    \item Cada resultado puede asociarse con una tarea y un registro de origen.
+    \item Existe una estructura de destino definida o puede crearse una estructura administrada por la aplicación.
+    \item El contenido original permanece disponible después del procesamiento.
+    \item Las operaciones de escritura pueden ejecutarse mediante transacciones.
+    \item Los identificadores de tareas, documentos y resultados son únicos.
+\end{elementosmodulo}
+
+\item[Restricciones]
+\begin{elementosmodulo}
+    \item La información original no deberá eliminarse ni sobrescribirse sin conservar una referencia histórica.
+    \item Las escrituras deberán limitarse a las bases de datos y tablas autorizadas.
+    \item Los resultados incompletos o inválidos no deberán marcarse como procesamientos exitosos.
+    \item Las tablas creadas por la aplicación deberán registrar explícitamente su origen y propietario.
+    \item Los reprocesamientos deberán conservar la relación con las ejecuciones anteriores.
+    \item Una falla de escritura no deberá provocar la pérdida del resultado recibido desde OCR Server.
+\end{elementosmodulo}
+
+\item[Estructura general] El módulo recibe el resultado OCR y la identificación del registro de origen, valida la información y ejecuta las operaciones necesarias para conservarla en MySQL y actualizar la trazabilidad de la tarea.
+
+\textbf{Entradas:}
+\begin{elementosmodulo}
+    \item Identificador de la tarea y del elemento procesado.
+    \item Servidor, base de datos, tabla y clave primaria del registro de origen.
+    \item Resultado JSON y contenido Markdown generado por OCR Server.
+    \item Modelo, tiempo, estado y antecedentes de error.
+    \item Definición de la tabla de destino.
+\end{elementosmodulo}
+
+\textbf{Ejecución:}
+\begin{elementosmodulo}
+    \item Validación de la estructura y contenido del resultado.
+    \item Asociación del resultado con el documento y la tarea.
+    \item Inicio de una transacción sobre MySQL.
+    \item Creación o actualización del registro de destino.
+    \item Registro del modelo, tiempo, estado y error.
+    \item Confirmación o reversión de la transacción.
+    \item Actualización del catálogo SQLite cuando se creen nuevas estructuras.
+    \item Actualización del estado individual y general de la tarea.
+\end{elementosmodulo}
+
+\textbf{Salidas:}
+\begin{elementosmodulo}
+    \item Transcripción y metadatos almacenados.
+    \item Relación trazable entre documento, tarea, modelo y resultado.
+    \item Estado de persistencia del registro.
+    \item Referencia a la estructura de destino.
+    \item Información disponible para la consulta desde el portal.
+    \item Registro del error cuando la operación no pueda completarse.
+\end{elementosmodulo}
+
+\end{definicionmodulo}

@@ -1,0 +1,125 @@
+\section{Arquitectura del Sistema}
+
+\subsection{Diagrama de Contexto}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/Contexto.png}
+    \caption{Diagrama de contexto del sistema propuesto.}
+    \label{fig:diagrama_contexto_sistema}
+\end{figure}
+
+Como se observa en la figura \ref{fig:diagrama_contexto_sistema}, el diagrama de contexto el Sistema Coordinador concentra la interacción con los usuarios, el control de acceso y la administración documental, mientras que el Servidor OCR ejecuta el procesamiento especializado. Ambos sistemas se comunican mediante una API y utilizan la base de datos institucional para consultar y almacenar la información necesaria.
+
+Los usuarios interactúan con el front end del Sistema Coordinador. Las solicitudes autorizadas son enviadas al Servidor OCR, cuyos resultados son registrados y posteriormente puestos a disposición del usuario.
+
+Este enfoque permite separar la lógica de gestión del procesamiento OCR, facilitando la sustitución de modelos, la administración de tareas y la adaptación del sistema a los recursos disponibles, \textbf{permitiendo la posibilidad de tener Servidores OCR en paralelo}.
+
+
+\subsection{Diagrama de Arquitectura}
+
+La arquitectura del sistema se compone de un \textbf{Sistema Coordinador}, uno o más \textbf{OCR Server}, un servidor institucional \textbf{MySQL} y una base de datos local \textbf{SQLite}, como se observa en la figura \ref{fig:arquitectura}. El Sistema Coordinador centraliza la interacción con los usuarios, la preparación de los documentos, la gestión distribuida de las tareas y la persistencia de los resultados. Los OCR Server actúan como nodos independientes de procesamiento, permitiendo ejecutar tareas en paralelo entre distintas instancias.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/Arquitectura.png}
+    \caption{Diagrama de arquitectura del sistema propuesto.}
+    \label{fig:arquitectura}
+\end{figure}
+
+
+
+Dentro del Sistema Coordinador, el módulo \textbf{M1: Portal Web y Control de Acceso} permite autenticar a los usuarios, solicitar nuevos procesamientos y consultar las tareas registradas. El módulo \textbf{M2: Catálogo Estructural MySQL} obtiene los metadatos del servidor institucional y mantiene en SQLite una representación actualizada de sus bases de datos, tablas y columnas. Esta información es utilizada por el portal y por los demás módulos para validar las operaciones realizadas sobre MySQL.
+
+El módulo \textbf{M3: Preparación de Lotes Documentales} recibe la solicitud de procesamiento, valida la tabla, la columna documental y el rango seleccionado, y genera una nueva tarea. La tarea es entregada al módulo \textbf{M4: Gestión y Orquestación Distribuida de Tareas}, encargado de dividir el lote en elementos individuales, registrar su estado en SQLite y distribuir los documentos entre los OCR Server disponibles.
+
+Cada OCR Server dispone del módulo \textbf{M5: API de Integración con OCR Server}, que recibe las solicitudes del Sistema Coordinador y traduce las respuestas del servicio. El módulo \textbf{M6: Administración del Servicio OCR} controla el estado operativo, el modelo activo y la ejecución interna del servidor. Finalmente, el módulo \textbf{M7: Procesamiento e Inferencia Documental} ejecuta la transcripción del documento y devuelve el contenido reconocido, los metadatos, los tiempos de ejecución y los errores detectados.
+
+Los resultados obtenidos son enviados nuevamente al Sistema Coordinador. El módulo \textbf{M4} actualiza el progreso de la tarea y entrega los resultados al módulo \textbf{M8: Persistencia y Trazabilidad de Resultados}. Este último consulta la estructura de destino, relaciona cada resultado con su documento de origen y registra la transcripción final en MySQL sin eliminar la información original.
+
+SQLite mantiene el catálogo estructural, el registro de los OCR Server y el estado de las tareas, mientras que MySQL conserva los documentos originales y los resultados procesados. La utilización de múltiples OCR Server permite aumentar la capacidad de procesamiento, distribuir la carga y continuar las tareas disponibles cuando una instancia se encuentra ocupada o fuera de servicio.
+
+
+\subsection{Enumeración de Módulos}
+\label{subsec:enumeracion_modulos}
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \caption{Módulos de la arquitectura del sistema.}
+    \label{tab:enumeracion_modulos}
+
+    \begin{tabularx}{\textwidth}{
+        >{\raggedright\arraybackslash}p{0.30\textwidth}
+        >{\raggedright\arraybackslash}X
+        >{\centering\arraybackslash}p{0.13\textwidth}
+    }
+        \toprule
+        \textbf{Módulo} & \textbf{Propósito} & \textbf{Sección} \\
+        \midrule
+
+        M1: Portal web y acceso &
+        Proporcionar acceso autenticado y las vistas de operación. &
+        \ref{subsec:modulo_m1} \\
+
+        M2: Catálogo estructural MySQL &
+        Registrar en SQLite la estructura de los servidores MySQL. &
+        \ref{subsec:modulo_m2} \\
+
+        M3: Preparación de lotes &
+        Seleccionar y validar los registros que serán procesados. &
+        \ref{subsec:modulo_m3} \\
+
+        M4: Gestión de tareas &
+        Controlar la creación, ejecución, seguimiento y reprocesamiento. &
+        \ref{subsec:modulo_m4} \\
+
+        M5: API de integración OCR &
+        Comunicar el Sistema Coordinador con OCR Server. &
+        \ref{subsec:modulo_m5} \\
+
+        M6: Administración del servicio OCR &
+        Controlar el daemon, los modelos, los estados y los registros técnicos. &
+        \ref{subsec:modulo_m6} \\
+
+        M7: Procesamiento e inferencia &
+        Procesar imágenes y PDF mediante el modelo activo. &
+        \ref{subsec:modulo_m7} \\
+
+        M8: Persistencia y trazabilidad &
+        Registrar los resultados y asociarlos con los documentos de origen. &
+        \ref{subsec:modulo_m8} \\
+
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\subsection{Matriz de Requisitos Funcionales y Módulos}
+\label{subsec:matriz_requisitos_modulos}
+
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \caption{Matriz de requisitos funcionales y módulos.}
+    \label{tab:matriz_requisitos_modulos}
+
+    \begin{tabular}{c|cccccccc}
+        \toprule
+        \textbf{Requisito}
+        & \textbf{M1} & \textbf{M2} & \textbf{M3} & \textbf{M4}
+        & \textbf{M5} & \textbf{M6} & \textbf{M7} & \textbf{M8} \\
+        \midrule
+        RF1 & X &   &   &   &   &   &   &   \\
+        RF2 & X &   &   &   & X & X &   &   \\
+        RF3 &   & X &   &   &   &   &   &   \\
+        RF4 & X & X & X &   &   &   &   &   \\
+        RF5 & X &   & X & X & X &   &   & X \\
+        RF6 &   &   &   &   & X & X &   &   \\
+        RF7 &   &   &   &   & X & X & X &   \\
+        RF8 &   & X &   & X &   &   &   & X \\
+        \bottomrule
+    \end{tabular}
+\end{table}

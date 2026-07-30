@@ -1,0 +1,135 @@
+\section{Gestión de Riesgos}
+\label{sec:gestion_riesgos}
+
+%La gestión de riesgos considera las condiciones que pueden afectar la interacción entre el Sistema Coordinador, los servidores MySQL y las distintas instancias de OCR Server.
+
+\subsection{Supuestos}
+\label{subsec:supuestos}
+
+\begin{enumerate}
+    \item Los servidores MySQL se encuentran disponibles y permiten el acceso de usuarios autorizados.
+    \item Las tablas seleccionadas poseen una clave primaria y una columna que permite recuperar el documento.
+    \item Los OCR Server informan su disponibilidad, modelo activo y capacidad de procesamiento.
+    \item Existe conectividad entre el Sistema Coordinador, MySQL y los OCR Server.
+    \item Los documentos poseen formatos compatibles con alguno de los perfiles disponibles.
+    \item SQLite permite conservar el catálogo estructural y el estado de las tareas.
+\end{enumerate}
+
+\subsection{Dependencias}
+\label{subsec:dependencias}
+
+\begin{enumerate}
+    \item \textbf{MySQL institucional:} proporciona los documentos, metadatos y estructuras de destino.
+    \item \textbf{OCR Server:} ejecuta el reconocimiento y análisis documental.
+    \item \textbf{Red institucional:} permite la comunicación entre los componentes.
+    \item \textbf{Recursos computacionales:} determinan la capacidad y velocidad de procesamiento.
+    \item \textbf{Modelos y bibliotecas:} permiten ejecutar los perfiles OCR configurados.
+    \item \textbf{SQLite:} mantiene el catálogo local, los servidores registrados y las tareas.
+\end{enumerate}
+
+\subsection{Restricciones}
+\label{subsec:restricciones}
+
+\begin{enumerate}
+    \item El sistema deberá funcionar con el hardware disponible en la institución.
+    \item Cada OCR Server deberá respetar su capacidad y nivel de concurrencia.
+    \item Una tarea solo podrá asignarse a servidores compatibles con el modelo requerido.
+    \item Los documentos y registros originales no deberán eliminarse ni sobrescribirse.
+    \item Toda ejecución, reasignación y reprocesamiento deberá conservar su trazabilidad.
+    \item SQLite almacenará información estructural y de control, pero no reemplazará a MySQL.
+    \item Los componentes internos de OCR Server deberán permanecer dentro de una red controlada.
+\end{enumerate}
+
+\newpage
+
+\subsection{Riesgos}
+\label{subsec:riesgos}
+
+La Tabla~\ref{tab:riesgos_sistema} presenta los principales riesgos identificados y sus medidas de mitigación.
+
+\renewcommand{\arraystretch}{1.2}
+
+\begin{longtable}{
+    >{\raggedright\arraybackslash}p{0.43\textwidth}
+    >{\raggedright\arraybackslash}p{0.49\textwidth}
+}
+\caption{Riesgos del sistema y medidas de mitigación.}
+\label{tab:riesgos_sistema}\\
+
+\toprule
+\textbf{Riesgo} & \textbf{Medida de mitigación} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Riesgo} & \textbf{Medida de mitigación} \\
+\midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+\textbf{Indisponibilidad de un OCR Server.}
+
+Una instancia puede dejar de responder durante una tarea.
+&
+Detectar su estado y reasignar los documentos pendientes a otro servidor compatible.
+\\
+
+\textbf{Saturación de recursos.}
+
+La carga puede superar la memoria o capacidad de procesamiento disponible.
+&
+Limitar la concurrencia y distribuir las tareas según la carga de cada servidor.
+\\
+
+\textbf{Asignación incompatible.}
+
+Una tarea puede enviarse a un servidor que no dispone del modelo requerido.
+&
+Validar previamente los modelos, recursos y capacidades de cada instancia.
+\\
+
+\textbf{Pérdida o duplicación de tareas.}
+
+Una interrupción puede provocar ejecuciones incompletas o repetidas.
+&
+Utilizar identificadores únicos, estados persistentes y límites de reintentos.
+\\
+
+\textbf{Desactualización del catálogo.}
+
+La estructura de MySQL puede cambiar respecto de la registrada en SQLite.
+&
+Sincronizar y validar el catálogo antes de crear o ejecutar una tarea.
+\\
+
+\textbf{Resultados OCR incorrectos.}
+
+La calidad del documento o del modelo puede afectar la transcripción.
+&
+Conservar el original y permitir el reprocesamiento con otro modelo o perfil.
+\\
+
+\textbf{Fallo al almacenar resultados.}
+
+Una escritura incompleta puede generar inconsistencias.
+&
+Utilizar transacciones y confirmar la persistencia antes de finalizar el documento.
+\\
+
+\textbf{Exposición de información.}
+
+Credenciales o servicios internos pueden ser accedidos sin autorización.
+&
+Restringir permisos, proteger las sesiones y operar dentro de una red controlada.
+\\
+
+\textbf{Crecimiento del almacenamiento.}
+
+Los archivos temporales, resultados y registros pueden consumir el espacio disponible.
+&
+Aplicar políticas de limpieza, respaldo y retención de información.
+\\
+
+\end{longtable}

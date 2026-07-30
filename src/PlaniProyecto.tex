@@ -24,160 +24,358 @@ Desarrollar y validar una solución de transcripción y análisis de documentos 
     \item[\textbf{OE-05}] Validar el prototipo mediante documentos representativos y dentro del entorno computacional disponible, evaluando conjuntamente la fidelidad de los resultados, el tiempo de procesamiento, el consumo de recursos, la estabilidad y la reproducibilidad de la ejecución.
 \end{enumerate}
 
+
+\newcommand{\responsable}{\shortstack[c]{Cristóbal Díaz\\Vilches}}
+
 \subsection{Hitos y Actividades}
 \label{subsec:hitos_actividades}
 
-%Las actividades corresponden a las acciones principales necesarias para alcanzar cada objetivo específico. Su ejecución produce evidencias verificables, tales como documentos de caracterización, conjuntos de prueba, resultados experimentales, código, configuraciones y prototipos funcionales. Los hitos representan los resultados principales que permiten controlar el avance del proyecto.
 
-\renewcommand{\arraystretch}{1.25}
+\begingroup
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{1.7pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\emergencystretch}{2em}
+\sloppy
 
 \begin{longtable}{
-    >{\centering\arraybackslash}p{1.1cm}
-    >{\centering\arraybackslash}p{1.2cm}
-    p{6.4cm}
-    p{4.2cm}
-    p{2.2cm}
+    >{\centering\arraybackslash}p{1.45cm}
+    >{\RaggedRight\arraybackslash}p{6.0cm}
+    >{\centering\arraybackslash}p{1.9cm}
+    >{\centering\arraybackslash}p{1.65cm}
+    >{\centering\arraybackslash}p{1.65cm}
+    >{\centering\arraybackslash}p{0.95cm}
 }
-\caption{Objetivos específicos, actividades e hitos del proyecto.}
+\caption{Actividades, tareas, resultados de producción e hitos del proyecto.}
 \label{tab:hitos_actividades}\\
 
 \toprule
-\textbf{Hito} &
-\textbf{Obj.} &
-\textbf{Actividades principales} &
-\textbf{Resultado verificable} &
-\textbf{Requisitos relacionados} \\
+\textbf{\shortstack{Act, \\ ...}} &
+\textbf{Descripción resumida} &
+\textbf{Responsable} &
+\textbf{\shortstack{Fecha\\inicio}} &
+\textbf{\shortstack{Fecha\\entrega}} &
+\textbf{\shortstack{\% de\\logro}} \\
 \midrule
 \endfirsthead
 
+\multicolumn{6}{c}{\tablename\ \thetable{} -- continuación} \\
 \toprule
-\textbf{Hito} &
-\textbf{Obj.} &
-\textbf{Actividades principales} &
-\textbf{Resultado verificable} &
-\textbf{Requisitos relacionados} \\
+\textbf{\shortstack{Act, \\ ...}} &
+\textbf{Descripción resumida} &
+\textbf{Responsable} &
+\textbf{\shortstack{Fecha\\inicio}} &
+\textbf{\shortstack{Fecha\\entrega}} &
+\textbf{\shortstack{\% de\\logro}} \\
 \midrule
 \endhead
 
 \midrule
-\multicolumn{5}{r}{Continúa en la página siguiente.} \\
+\multicolumn{6}{r}{Continúa en la página siguiente.} \\
 \endfoot
 
 \bottomrule
 \endlastfoot
 
-\textbf{H-01} &
-OE-01 &
-\textbf{A1.1.} Recopilar, junto con la contraparte institucional, una muestra de documentos representativa del dominio. \newline
-\textbf{A1.2.} Clasificar los documentos según su categoría, estructura, calidad visual, cantidad de páginas y presencia de elementos como tablas, columnas, sellos o anotaciones. \newline
-\textbf{A1.3.} Identificar la información que deberá recuperarse y establecer los criterios para construir referencias verificadas. &
-Conjunto documental caracterizado, acompañado por un informe de tipologías, condiciones de entrada y criterios de referencia. &
-RF-05, RF-06, RNF-06 \\
-
+\addlinespace[3pt]
+\multicolumn{6}{l}{\textbf{OE1 --- Caracterizar el dominio documental y sus restricciones}} \\
 \midrule
 
-\textbf{H-02} &
-OE-02 &
-\textbf{A2.1.} Definir las variables que deberán mantenerse constantes durante las comparaciones, incluyendo documentos, parámetros de entrada y condiciones de ejecución. \newline
-\textbf{A2.2.} Establecer las métricas para evaluar fidelidad textual, orden de lectura, estructura documental, tiempo de procesamiento y consumo de recursos. \newline
-\textbf{A2.3.} Diseñar el mecanismo de identificación y almacenamiento de ejecuciones, configuraciones, resultados y errores. &
-Protocolo de evaluación y diseño del entorno experimental, con métricas, condiciones de comparación y reglas de trazabilidad definidas. &
-RF-06, RNF-05, RNF-06, RA-S04 \\
+\textbf{A1.1} &
+\textbf{Contextualización institucional y formulación del problema.} &
+\responsable &
+01/06/2026 &
+05/06/2026 &
+\textbf{100\%} \\
+
+
+\addlinespace[2pt]
+\textbf{A1.2} &
+\textbf{Caracterización del problema de transcripción y comprensión documental.} &
+\responsable &
+01/06/2026 &
+05/06/2026 &
+\textbf{100\%} \\
+
+
+\addlinespace[2pt]
+\textbf{A1.3} &
+\textbf{Caracterización de restricciones ambientales y definición de requisitos.} &
+\responsable &
+01/06/2026 &
+29/07/2026 &
+\textbf{100\%} \\
+
+
+\addlinespace[2pt]
+\textbf{RP1} &
+\textbf{Caracterización documental y requisitos del sistema.} &
+\responsable &
+01/06/2026 &
+29/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H1.1} &
+\textbf{Problema, alcance y requisitos definidos.} &
+\responsable &
+29/07/2026 &
+29/07/2026 &
+\textbf{100\%} \\
 
 \midrule
-
-\textbf{H-03} &
-OE-03 &
-\textbf{A3.1.} Preparar alternativas de procesamiento documental compatibles con el entorno institucional. \newline
-\textbf{A3.2.} Ejecutar las pruebas sobre el mismo conjunto documental y bajo condiciones equivalentes. \newline
-\textbf{A3.3.} Comparar la fidelidad, el tiempo, el consumo de memoria, la estabilidad y las limitaciones observadas en cada configuración. \newline
-\textbf{A3.4.} Seleccionar una o más configuraciones viables para continuar el desarrollo. &
-Informe comparativo de alternativas y selección justificada de una configuración compatible con los requisitos del proyecto. &
-RF-01, RF-02, RF-05, RF-06, RNF-01, RNF-02, RNF-04, RNF-05 \\
-
+\addlinespace[3pt]
+\multicolumn{6}{l}{\textbf{OE2 --- Definir una metodología reproducible de evaluación}} \\
 \midrule
 
-\textbf{H-04} &
-OE-04 &
-\textbf{A4.1.} Diseñar el flujo general de procesamiento desde la recepción del documento hasta la obtención de sus resultados. \newline
-\textbf{A4.2.} Implementar la extracción del contenido textual y, cuando corresponda, la conservación del orden de lectura y de la estructura documental. \newline
-\textbf{A4.3.} Transformar los resultados en una representación procesable. \newline
-\textbf{A4.4.} Incorporar la generación de metadatos y descripciones de contenido requeridas para apoyar la recuperación documental. &
-Prototipo funcional capaz de recibir documentos digitalizados y producir transcripciones, representaciones estructuradas e información complementaria. &
-RF-01, RF-02, RF-03, RF-04, RNF-03, RNF-04 \\
+\textbf{A2.1} &
+\textbf{Definición de referencias verificadas y normalización.} &
+\responsable &
+22/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A2.2} &
+\textbf{Selección e implementación de métricas de evaluación.} &
+\responsable &
+23/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A2.3} &
+\textbf{Diseño del experimento, captura de recursos y trazabilidad.} &
+\responsable &
+10/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+
+\addlinespace[2pt]
+\textbf{A2.4} &
+\textbf{Diseño e implementación del dashboard de resultados.} &
+\responsable &
+02/07/2026 &
+29/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{RP2} &
+\textbf{Protocolo de evaluación y diseño del benchmark.} &
+\responsable &
+10/06/2026 &
+29/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H2.1} &
+\textbf{Metodología de evaluación disponible.} &
+\responsable &
+03/07/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H2.2} &
+\textbf{Documentación de los diseños y métricas.} &
+\responsable &
+29/07/2026 &
+29/07/2026 &
+\textbf{100\%} \\
 
 \midrule
+\addlinespace[3pt]
+\multicolumn{6}{l}{\textbf{OE3 --- Evaluar alternativas de procesamiento documental de código abierto}} \\
+\midrule
 
-\textbf{H-05} &
-OE-05 &
-\textbf{A5.1.} Ejecutar el prototipo sobre el conjunto documental representativo. \newline
-\textbf{A5.2.} Verificar la fidelidad textual y estructural mediante las métricas definidas. \newline
-\textbf{A5.3.} Evaluar tiempos, consumo de recursos, estabilidad y continuidad de las ejecuciones. \newline
-\textbf{A5.4.} Documentar las capacidades, restricciones y condiciones recomendadas para su utilización. &
-Prototipo validado en el entorno disponible, acompañado por un informe de resultados, limitaciones y recomendaciones de operación. &
-RNF-01, RNF-02, RNF-03, RNF-05, RNF-06, RA-H01, RA-H02, RA-S02, RA-S03 \\
+\textbf{A3.1} &
+\textbf{Investigación y preselección de modelos.} &
+\responsable &
+01/06/2026 &
+19/06/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A3.2} &
+\textbf{Preparación de modelos, cuantizaciones y perfiles.} &
+\responsable &
+08/06/2026 &
+26/06/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A3.3} &
+\textbf{Ejecución del benchmark comparativo.} &
+\responsable &
+10/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A3.4} &
+\textbf{Análisis comparativo y selección.} &
+\responsable &
+17/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{RP3} &
+\textbf{Evaluación comparativa de modelos y configuraciones.} &
+\responsable &
+01/06/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H3.1} &
+\textbf{Herramienta de visualización y comparación de resultados.} &
+\responsable &
+03/07/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H3.2} &
+\textbf{Alternativa de procesamiento seleccionada.} &
+\responsable &
+03/07/2026 &
+03/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H3.3} &
+\textbf{Benchmark integrado y reproducible.} &
+\responsable &
+26/06/2026 &
+26/06/2026 &
+\textbf{100\%} \\
+
+\midrule
+\addlinespace[3pt]
+\multicolumn{6}{l}{\textbf{OE4 --- Implementar un prototipo de transcripción y análisis documental}} \\
+\midrule
+
+\textbf{A4.1} &
+\textbf{Diseño de arquitectura, módulos e interfaces.} &
+\responsable &
+06/07/2026 &
+29/07/2026 &
+\textbf{100\%} \\
+
+
+\addlinespace[2pt]
+\textbf{A4.2} &
+\textbf{Implementación del flujo de preprocesamiento e inferencia.} &
+\responsable &
+08/07/2026 &
+20/07/2026 &
+\textbf{100\%} \\
+
+\addlinespace[2pt]
+\textbf{A4.3} &
+\textbf{Generación de salida estructurada, metadatos y descripciones.} &
+\responsable &
+20/07/2026 &
+02/10/2026 &
+\textbf{50\%} \\
+
+\addlinespace[2pt]
+\textbf{A4.4} &
+\textbf{Integración local y manejo robusto de ejecuciones.} &
+\responsable &
+13/07/2026 &
+21/08/2026 &
+\textbf{80\%} \\
+
+\addlinespace[2pt]
+\textbf{RP4} &
+\textbf{Prototipo funcional de procesamiento documental.} &
+\responsable &
+08/07/2026 &
+23/10/2026 &
+\textbf{82.5\%} \\
+
+\textbf{H4.1} &
+\textbf{Procesamiento documental de extremo a extremo.} &
+\responsable &
+20/07/2026 &
+20/07/2026 &
+\textbf{100\%} \\
+
+\textbf{H4.2} &
+\textbf{Servicio OCR, CLI y API operativos.} &
+\responsable &
+23/07/2026 &
+23/07/2026 &
+\textbf{100\%} \\
+
+\midrule
+\addlinespace[3pt]
+\multicolumn{6}{l}{\textbf{OE5 --- Validar y documentar la solución en el entorno institucional}} \\
+\midrule
+
+\textbf{A5.1} &
+\textbf{Preparación del conjunto final de validación.} &
+\responsable &
+22/06/2026 &
+06/11/2026 &
+\textbf{50\%} \\
+
+\addlinespace[2pt]
+\textbf{A5.2} &
+\textbf{Validación de fidelidad y eficiencia.} &
+\responsable &
+15/06/2026 &
+20/11/2026 &
+\textbf{66.7\%} \\
+
+\addlinespace[2pt]
+\textbf{A5.3} &
+\textbf{Pruebas de estabilidad y procesamiento por lotes.} &
+\responsable &
+20/07/2026 &
+27/11/2026 &
+\textbf{60\%} \\
+
+\addlinespace[2pt]
+\textbf{A5.4} &
+\textbf{Documentación técnica, académica y recomendaciones.} &
+\responsable &
+21/07/2026 &
+11/12/2026 &
+\textbf{75\%} \\
+
+\addlinespace[2pt]
+\textbf{RP5} &
+\textbf{Solución validada y documentación técnica.} &
+\responsable &
+15/06/2026 &
+11/12/2026 &
+\textbf{62.9\%} \\
+
+\textbf{H5.1} &
+\textbf{Solución validada y documentada.} &
+\responsable &
+11/12/2026 &
+11/12/2026 &
+\textbf{0\%} \\
 
 \end{longtable}
 
-Las actividades presentadas constituyen el nivel de planificación inicial. Durante la ejecución deberán desagregarse en tareas atómicas, asignadas a responsables y plazos determinados. Cada tarea deberá producir una evidencia concreta, como un documento, conjunto de datos, configuración, resultado experimental, componente de software o registro de validación.
+\endgroup
+
+
 
 \subsection{Carta Gantt}
-\label{subsec:carta_gantt}
-
-Debido a que en esta etapa aún no se ha establecido un calendario oficial de ejecución, la planificación temporal se expresa mediante doce períodos relativos. Estos períodos podrán sustituirse posteriormente por semanas o meses, manteniendo las dependencias y el orden lógico definido.
 
 \begin{figure}[H]
     \centering
-
-    \begin{ganttchart}[
-        hgrid,
-        vgrid,
-        x unit=0.75cm,
-        y unit chart=0.58cm,
-        title height=1,
-        bar height=0.55,
-        group height=0.35,
-        milestone height=0.55,
-        title label font=\small\bfseries,
-        bar label font=\small,
-        group label font=\small\bfseries,
-        milestone label font=\small
-    ]{1}{12}
-
-        \gantttitle{Período de planificación}{12} \\
-        \gantttitlelist{1,...,12}{1} \\
-
-        \ganttgroup{Caracterización del problema}{1}{2} \\
-        \ganttbar{Recopilación y clasificación documental}{1}{2} \\
-        \ganttmilestone{H-01: Conjunto caracterizado}{2} \\
-
-        \ganttgroup{Diseño de la evaluación}{2}{4} \\
-        \ganttbar{Definición de referencias y métricas}{2}{3} \\
-        \ganttbar{Diseño de trazabilidad experimental}{3}{4} \\
-        \ganttmilestone{H-02: Protocolo definido}{4} \\
-
-        \ganttgroup{Evaluación de alternativas}{4}{7} \\
-        \ganttbar{Preparación de configuraciones}{4}{5} \\
-        \ganttbar{Ejecución de pruebas controladas}{5}{7} \\
-        \ganttbar{Análisis y selección}{6}{7} \\
-        \ganttmilestone{H-03: Alternativa seleccionada}{7} \\
-
-        \ganttgroup{Construcción del prototipo}{7}{11} \\
-        \ganttbar{Diseño del flujo de procesamiento}{7}{8} \\
-        \ganttbar{Implementación de transcripción y estructura}{8}{10} \\
-        \ganttbar{Generación de información complementaria}{9}{11} \\
-        \ganttmilestone{H-04: Prototipo funcional}{11} \\
-
-        \ganttgroup{Validación y cierre}{10}{12} \\
-        \ganttbar{Pruebas en el entorno institucional}{10}{11} \\
-        \ganttbar{Análisis de resultados y limitaciones}{11}{12} \\
-        \ganttbar{Documentación final}{11}{12} \\
-        \ganttmilestone{H-05: Prototipo validado}{12}
-
-    \end{ganttchart}
-
-    \caption{Planificación temporal preliminar del proyecto.}
-    \label{fig:carta_gantt_proyecto}
+    \includegraphics[width=1.0\linewidth]{images/Gantt.png}
+    \caption{Carta Gantt}
+    \label{fig:gantt}
 \end{figure}
 
-La planificación propuesta mantiene una progresión desde la comprensión del problema hacia la validación de la solución. La caracterización documental y el diseño del procedimiento de evaluación preceden a la selección tecnológica, evitando adoptar una alternativa únicamente a partir de sus especificaciones teóricas. Posteriormente, la implementación y validación permiten determinar si la configuración seleccionada satisface las necesidades documentales y las restricciones operacionales de la institución.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\linewidth]{images/coloresGantt.png}
+    \caption{Codigo de colores de Carta Gantt}
+    \label{fig:colorGantt}
+\end{figure}
