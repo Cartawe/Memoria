@@ -13,15 +13,25 @@ Desarrollar y validar una solución de transcripción y análisis de documentos 
 \label{subsec:objetivos_especificos}
 
 \begin{enumerate}
-    \item[\textbf{OE-01}] Caracterizar los documentos digitalizados considerados por el proyecto, identificando sus categorías, estructuras, condiciones de digitalización, niveles de degradación y elementos de información relevantes, mediante la conformación de un conjunto documental representativo.
+    \item[\textbf{OE-01}] \textbf{Caracterizar el dominio documental y sus restricciones.}
 
-    \item[\textbf{OE-02}] Definir un procedimiento reproducible para evaluar alternativas de procesamiento documental, estableciendo documentos de referencia, configuraciones experimentales, métricas de fidelidad y mecanismos para registrar tiempos de ejecución y consumo de recursos.
+    Caracterizar los documentos digitalizados considerados por el proyecto, identificando sus categorías, estructuras, condiciones de digitalización, niveles de degradación y elementos de información relevantes, mediante la conformación de un conjunto documental representativo.
 
-    \item[\textbf{OE-03}] Evaluar comparativamente alternativas de código abierto para la transcripción y el análisis documental bajo condiciones equivalentes, con el propósito de identificar configuraciones compatibles con las restricciones de infraestructura institucional.
+    \item[\textbf{OE-02}] \textbf{Evaluar alternativas de procesamiento documental de código abierto mediante una metodología reproducible.}
 
-    \item[\textbf{OE-04}] Implementar un prototipo funcional que permita procesar documentos digitalizados, recuperar su contenido textual y estructural y generar representaciones procesables, metadatos y descripciones de contenido.
+    Definir y aplicar una metodología reproducible para evaluar comparativamente alternativas de código abierto orientadas a la transcripción y procesamiento documental, estableciendo documentos de referencia, configuraciones experimentales y métricas asociadas a la fidelidad de los resultados, tiempos de ejecución y consumo de recursos, con el propósito de identificar las alternativas compatibles con las restricciones de infraestructura institucional.
 
-    \item[\textbf{OE-05}] Validar el prototipo mediante documentos representativos y dentro del entorno computacional disponible, evaluando conjuntamente la fidelidad de los resultados, el tiempo de procesamiento, el consumo de recursos, la estabilidad y la reproducibilidad de la ejecución.
+    \item[\textbf{OE-03}] \textbf{Implementar un prototipo de transcripción y análisis documental.}
+
+    Implementar un prototipo funcional que permita procesar documentos digitalizados, recuperar su contenido textual y generar una representación procesable de los resultados obtenidos.
+
+    \item[\textbf{OE-04}] \textbf{Implementar el postprocesamiento, indexación y acceso al contenido transcrito desde DocuDigital.}
+
+    Implementar mecanismos de limpieza y postprocesamiento sobre los resultados generados por el prototipo de transcripción, con el propósito de normalizar el contenido textual, incorporarlo a un índice de búsqueda y permitir su recuperación mediante funcionalidades de búsqueda integradas en DocuDigital.
+
+    \item[\textbf{OE-05}] \textbf{Documentar los sistemas y componentes desarrollados.}
+
+    Documentar la arquitectura, configuración, funcionamiento e integración de los sistemas y componentes implementados durante el proyecto, incluyendo los procedimientos necesarios para su instalación, operación, mantenimiento y continuidad dentro del entorno institucional.
 \end{enumerate}
 
 
@@ -80,283 +90,126 @@ Desarrollar y validar una solución de transcripción y análisis de documentos 
 \endlastfoot
 
 \addlinespace[3pt]
-\multicolumn{6}{l}{\textbf{OE1 --- Caracterizar el dominio documental y sus restricciones}} \\
+\multicolumn{6}{l}{\textbf{OE1 --- Caracterización del dominio documental y definición del problema}} \\
 \midrule
-
-\textbf{A1.1} &
-\textbf{Contextualización institucional y formulación del problema.} &
-\responsable &
-01/06/2026 &
-05/06/2026 &
-\textbf{100\%} \\
-
-
+\textbf{A1.1} & \textbf{Contextualización institucional y formulación del problema.} & \responsable & 01/06/2026 & 05/06/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T1.1.1 & Realizar la inducción e identificar objetivos, herramientas, actores y alcance del proyecto. & \responsable & 01/06/2026 & 01/06/2026 & 100\% \\
+\hspace{0.2cm}T1.1.2 & Revisar DocuDigital y las dificultades de estandarización, búsqueda e identificación del contenido. & \responsable & 01/06/2026 & 05/06/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A1.2} &
-\textbf{Caracterización del problema de transcripción y comprensión documental.} &
-\responsable &
-01/06/2026 &
-05/06/2026 &
-\textbf{100\%} \\
-
-
+\textbf{A1.2} & \textbf{Caracterización de documentos y restricciones.} & \responsable & 01/06/2026 & 26/06/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T1.2.1 & Investigar modelos OCR/VLM y analizar estructura, tablas, layout y calidad de documentos. & \responsable & 01/06/2026 & 22/06/2026 & 100\% \\
+\hspace{0.2cm}T1.2.2 & Caracterizar restricciones de CPU, memoria, VRAM, Ubuntu, CUDA y ejecución local. & \responsable & 04/06/2026 & 26/06/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A1.3} &
-\textbf{Caracterización de restricciones ambientales y definición de requisitos.} &
-\responsable &
-01/06/2026 &
-29/07/2026 &
-\textbf{100\%} \\
-
-
-\addlinespace[2pt]
-\textbf{RP1} &
-\textbf{Caracterización documental y requisitos del sistema.} &
-\responsable &
-01/06/2026 &
-29/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H1.1} &
-\textbf{Problema, alcance y requisitos definidos.} &
-\responsable &
-29/07/2026 &
-29/07/2026 &
-\textbf{100\%} \\
+\textbf{A1.3} & \textbf{Definición de requisitos y conjunto representativo.} & \responsable & 15/06/2026 & 30/07/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T1.3.1 & Definir requisitos funcionales, no funcionales, ambientales, de hardware y software. & \responsable & 15/06/2026 & 30/07/2026 & 100\% \\
+\hspace{0.2cm}T1.3.2 & Construir referencias Ground Truth y criterios para seleccionar documentos representativos. & \responsable & 22/06/2026 & 03/07/2026 & 100\% \\
+\hspace{0.2cm}T1.3.3 & Consolidar problema, alcance y requisitos en el informe Hito 1 y la Bitácora 01. & \responsable & 27/07/2026 & 30/07/2026 & 100\% \\
+\textbf{RP1} & \textbf{Caracterización documental y requisitos del sistema.} & \responsable & 01/06/2026 & 30/07/2026 & \textbf{100\%} \\
+\textbf{H1.1} & \textbf{Problema, alcance y requisitos definidos.} & \responsable & 28/07/2026 & 30/07/2026 & \textbf{100\%} \\
 
 \midrule
 \addlinespace[3pt]
-\multicolumn{6}{l}{\textbf{OE2 --- Definir una metodología reproducible de evaluación}} \\
+\multicolumn{6}{l}{\textbf{OE2 --- Evaluar alternativas de procesamiento documental de código abierto mediante una metodología reproducible}} \\
 \midrule
-
-\textbf{A2.1} &
-\textbf{Definición de referencias verificadas y normalización.} &
-\responsable &
-22/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A2.1} & \textbf{Investigación y preselección de alternativas.} & \responsable & 01/06/2026 & 22/06/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T2.1.1 & Evaluar Docling, PaddleOCR, Qwen, DeepSeek, LightOn, Nanonets, Dots.OCR y otras alternativas. & \responsable & 01/06/2026 & 22/06/2026 & 100\% \\
+\hspace{0.2cm}T2.1.2 & Seleccionar alternativas compatibles con documentos e infraestructura institucional. & \responsable & 03/06/2026 & 22/06/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A2.2} &
-\textbf{Selección e implementación de métricas de evaluación.} &
-\responsable &
-23/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A2.2} & \textbf{Definición de la metodología de evaluación.} & \responsable & 15/06/2026 & 03/07/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T2.2.1 & Construir Ground Truth y controlar la correspondencia entre referencia y predicción. & \responsable & 22/06/2026 & 02/07/2026 & 100\% \\
+\hspace{0.2cm}T2.2.2 & Implementar métricas de texto, orden de lectura, tablas, layout, tiempo y recursos. & \responsable & 23/06/2026 & 03/07/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A2.3} &
-\textbf{Diseño del experimento, captura de recursos y trazabilidad.} &
-\responsable &
-10/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
-
+\textbf{A2.3} & \textbf{Preparación de modelos y configuraciones.} & \responsable & 04/06/2026 & 26/06/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T2.3.1 & Configurar GGUF, llama.cpp, CUDA y cuantizaciones para CPU/GPU. & \responsable & 04/06/2026 & 12/06/2026 & 100\% \\
+\hspace{0.2cm}T2.3.2 & Definir perfiles de preprocesamiento y parámetros comparables por modelo. & \responsable & 15/06/2026 & 26/06/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A2.4} &
-\textbf{Diseño e implementación del dashboard de resultados.} &
-\responsable &
-02/07/2026 &
-29/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A2.4} & \textbf{Implementación y ejecución del benchmark.} & \responsable & 10/06/2026 & 03/07/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T2.4.1 & Implementar benchmarks modulares, PDF, monitoreo de recursos y ejecución secuencial. & \responsable & 10/06/2026 & 26/06/2026 & 100\% \\
+\hspace{0.2cm}T2.4.2 & Ejecutar pruebas, almacenar resultados y completar el dashboard comparativo. & \responsable & 26/06/2026 & 03/07/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{RP2} &
-\textbf{Protocolo de evaluación y diseño del benchmark.} &
-\responsable &
-10/06/2026 &
-29/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H2.1} &
-\textbf{Metodología de evaluación disponible.} &
-\responsable &
-03/07/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H2.2} &
-\textbf{Documentación de los diseños y métricas.} &
-\responsable &
-29/07/2026 &
-29/07/2026 &
-\textbf{100\%} \\
+\textbf{A2.5} & \textbf{Análisis comparativo y selección.} & \responsable & 17/06/2026 & 03/07/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T2.5.1 & Comparar calidad, rendimiento y estabilidad y seleccionar PaddleOCR y Qwen. & \responsable & 17/06/2026 & 03/07/2026 & 100\% \\
+\textbf{RP2} & \textbf{Metodología y evaluación comparativa de alternativas de procesamiento documental.} & \responsable & 01/06/2026 & 03/07/2026 & \textbf{100\%} \\
+\textbf{H2.1} & \textbf{Metodología de evaluación definida.} & \responsable & 26/06/2026 & 26/06/2026 & \textbf{100\%} \\
+\textbf{H2.2} & \textbf{Benchmark integrado y reproducible.} & \responsable & 03/07/2026 & 03/07/2026 & \textbf{100\%} \\
+\textbf{H2.3} & \textbf{Alternativa de procesamiento seleccionada.} & \responsable & 03/07/2026 & 03/07/2026 & \textbf{100\%} \\
 
 \midrule
 \addlinespace[3pt]
-\multicolumn{6}{l}{\textbf{OE3 --- Evaluar alternativas de procesamiento documental de código abierto}} \\
+\multicolumn{6}{l}{\textbf{OE3 --- Implementar un prototipo de transcripción y análisis documental}} \\
 \midrule
-
-\textbf{A3.1} &
-\textbf{Investigación y preselección de modelos.} &
-\responsable &
-01/06/2026 &
-19/06/2026 &
-\textbf{100\%} \\
-
+\textbf{A3.1} & \textbf{Diseño de la arquitectura del prototipo.} & \responsable & 06/07/2026 & 07/08/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T3.1.1 & Definir aplicación Linux .NET, daemon, CLI, comandos, clases y comunicación. & \responsable & 06/07/2026 & 13/07/2026 & 100\% \\
+\hspace{0.2cm}T3.1.2 & Diseñar coordinador, VlmHub, vistas, balanceo y persistencia institucional. & \responsable & 28/07/2026 & 07/08/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A3.2} &
-\textbf{Preparación de modelos, cuantizaciones y perfiles.} &
-\responsable &
-08/06/2026 &
-26/06/2026 &
-\textbf{100\%} \\
-
+\textbf{A3.2} & \textbf{Implementación del flujo de preparación documental.} & \responsable & 08/07/2026 & 14/08/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T3.2.1 & Implementar preparación de imágenes/PDF y preprocesamiento por página. & \responsable & 08/07/2026 & 20/07/2026 & 100\% \\
+\hspace{0.2cm}T3.2.2 & Integrar selección de documentos, descargas y procesamiento por lotes acotados. & \responsable & 10/08/2026 & 14/08/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A3.3} &
-\textbf{Ejecución del benchmark comparativo.} &
-\responsable &
-10/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A3.3} & \textbf{Integración y ejecución del modelo de transcripción.} & \responsable & 13/07/2026 & 07/08/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T3.3.1 & Integrar llama-server y PaddleOCR con configuraciones desacopladas por modelo. & \responsable & 13/07/2026 & 20/07/2026 & 100\% \\
+\hspace{0.2cm}T3.3.2 & Publicar e instalar VLM Server y API en Linux y máquinas virtuales. & \responsable & 21/07/2026 & 07/08/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A3.4} &
-\textbf{Análisis comparativo y selección.} &
-\responsable &
-17/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A3.4} & \textbf{Implementación del control y trazabilidad del procesamiento.} & \responsable & 13/07/2026 & 02/10/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T3.4.1 & Registrar estados, intentos, modelos, resultados, errores, tiempos y páginas. & \responsable & 13/07/2026 & 14/08/2026 & 100\% \\
+\hspace{0.2cm}T3.4.2 & Implementar interfaz web, Analytics y resúmenes compactos de progreso. & \responsable & 14/08/2026 & 02/10/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{RP3} &
-\textbf{Evaluación comparativa de modelos y configuraciones.} &
-\responsable &
-01/06/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H3.1} &
-\textbf{Herramienta de visualización y comparación de resultados.} &
-\responsable &
-03/07/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H3.2} &
-\textbf{Alternativa de procesamiento seleccionada.} &
-\responsable &
-03/07/2026 &
-03/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H3.3} &
-\textbf{Benchmark integrado y reproducible.} &
-\responsable &
-26/06/2026 &
-26/06/2026 &
-\textbf{100\%} \\
+\textbf{A3.5} & \textbf{Implementación de mecanismos de continuidad operacional.} & \responsable & 17/07/2026 & 02/10/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T3.5.1 & Conservar avance por página, recuperar trabajos y evitar reprocesamiento. & \responsable & 17/07/2026 & 17/08/2026 & 100\% \\
+\hspace{0.2cm}T3.5.2 & Corregir el bloqueo del dashboard y reconstruir progress.json en producción. & \responsable & 28/09/2026 & 30/09/2026 & 100\% \\
+\hspace{0.2cm}T3.5.3 & Desplegar y validar la corrección preservando workspaces y estado persistente. & \responsable & 01/10/2026 & 02/10/2026 & 100\% \\
+\textbf{RP3} & \textbf{Prototipo funcional de transcripción documental.} & \responsable & 06/07/2026 & 02/10/2026 & \textbf{100\%} \\
+\textbf{H3.1} & \textbf{Flujo de transcripción de extremo a extremo operativo.} & \responsable & 20/07/2026 & 20/07/2026 & \textbf{100\%} \\
+\textbf{H3.2} & \textbf{Gestión y trazabilidad del procesamiento implementadas.} & \responsable & 17/08/2026 & 17/08/2026 & \textbf{100\%} \\
+\textbf{H3.3} & \textbf{Prototipo operativo en el entorno institucional.} & \responsable & 02/10/2026 & 02/10/2026 & \textbf{100\%} \\
 
 \midrule
 \addlinespace[3pt]
-\multicolumn{6}{l}{\textbf{OE4 --- Implementar un prototipo de transcripción y análisis documental}} \\
+\multicolumn{6}{l}{\textbf{OE4 --- Implementar el postprocesamiento, indexación y acceso al contenido transcrito desde DocuDigital}} \\
 \midrule
-
-\textbf{A4.1} &
-\textbf{Diseño de arquitectura, módulos e interfaces.} &
-\responsable &
-06/07/2026 &
-29/07/2026 &
-\textbf{100\%} \\
-
-
+\textbf{A4.1} & \textbf{Definición e implementación del postprocesamiento textual.} & \responsable & 24/08/2026 & 18/09/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T4.1.1 & Auditar y corregir HTML, Markdown, LaTeX, Unicode, mojibake e idempotencia. & \responsable & 14/09/2026 & 16/09/2026 & 100\% \\
+\hspace{0.2cm}T4.1.2 & Procesar y validar 49.254 páginas conservando una representación auditable. & \responsable & 15/09/2026 & 18/09/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A4.2} &
-\textbf{Implementación del flujo de preprocesamiento e inferencia.} &
-\responsable &
-08/07/2026 &
-20/07/2026 &
-\textbf{100\%} \\
-
+\textbf{A4.2} & \textbf{Implementación de la indexación textual.} & \responsable & 04/09/2026 & -- & \textbf{97\%} \\
+\hspace{0.2cm}T4.2.1 & Comparar FTS5 y Lucene con 300 y 1.000 consultas y estructurar identificadores exactos. & \responsable & 04/09/2026 & 18/09/2026 & 100\% \\
+\hspace{0.2cm}T4.2.2 & Implementar sincronización incremental SQL Server--Lucene con checkpoints y lotes. & \responsable & 21/09/2026 & 23/09/2026 & 100\% \\
+\hspace{0.2cm}T4.2.3 & Implementar VlmHub.Sync, Full-Text y sincronización de páginas mediante Change Tracking. & \responsable & 22/09/2026 & -- & 90\% \\
 \addlinespace[2pt]
-\textbf{A4.3} &
-\textbf{Generación de salida estructurada, metadatos y descripciones.} &
-\responsable &
-20/07/2026 &
-02/10/2026 &
-\textbf{50\%} \\
-
+\textbf{A4.3} & \textbf{Implementación del mecanismo de búsqueda.} & \responsable & 04/09/2026 & 25/09/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T4.3.1 & Implementar API de consulta, actualización, configuración y health check. & \responsable & 21/09/2026 & 23/09/2026 & 100\% \\
+\hspace{0.2cm}T4.3.2 & Implementar consultas exactas/fuzzy, perfiles y recuperación por página. & \responsable & 21/09/2026 & 25/09/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A4.4} &
-\textbf{Integración local y manejo robusto de ejecuciones.} &
-\responsable &
-13/07/2026 &
-21/08/2026 &
-\textbf{80\%} \\
-
-\addlinespace[2pt]
-\textbf{RP4} &
-\textbf{Prototipo funcional de procesamiento documental.} &
-\responsable &
-08/07/2026 &
-23/10/2026 &
-\textbf{82.5\%} \\
-
-\textbf{H4.1} &
-\textbf{Procesamiento documental de extremo a extremo.} &
-\responsable &
-20/07/2026 &
-20/07/2026 &
-\textbf{100\%} \\
-
-\textbf{H4.2} &
-\textbf{Servicio OCR, CLI y API operativos.} &
-\responsable &
-23/07/2026 &
-23/07/2026 &
-\textbf{100\%} \\
+\textbf{A4.4} & \textbf{Integración de la búsqueda con DocuDigital.} & \responsable & 22/09/2026 & 25/09/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T4.4.1 & Integrar búsqueda avanzada, DataTables, filtros y apertura del PDF en la página encontrada. & \responsable & 22/09/2026 & 25/09/2026 & 100\% \\
+\hspace{0.2cm}T4.4.2 & Localizar dependencias, sanitizar Markdown y robustecer errores y configuración. & \responsable & 24/09/2026 & 25/09/2026 & 100\% \\
+\textbf{RP4} & \textbf{Sistema de postprocesamiento, indexación y búsqueda documental.} & \responsable & 24/08/2026 & -- & \textbf{99\%} \\
+\textbf{H4.1} & \textbf{Postprocesamiento e indexación operativos.} & \responsable & -- & -- & 0\% \\
+\textbf{H4.2} & \textbf{Búsqueda integrada en DocuDigital.} & \responsable & 25/09/2026 & 25/09/2026 & \textbf{100\%} \\
 
 \midrule
 \addlinespace[3pt]
-\multicolumn{6}{l}{\textbf{OE5 --- Validar y documentar la solución en el entorno institucional}} \\
+\multicolumn{6}{l}{\textbf{OE5 --- Documentar los sistemas y componentes desarrollados}} \\
 \midrule
-
-\textbf{A5.1} &
-\textbf{Preparación del conjunto final de validación.} &
-\responsable &
-22/06/2026 &
-06/11/2026 &
-\textbf{50\%} \\
-
+\textbf{A5.1} & \textbf{Levantamiento de la arquitectura y componentes.} & \responsable & 10/06/2026 & 02/10/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T5.1.1 & Documentar benchmark, servicio OCR, VlmHub, metadata, búsqueda e integración. & \responsable & 10/06/2026 & 23/09/2026 & 100\% \\
+\hspace{0.2cm}T5.1.2 & Documentar arquitectura productiva, progreso durable y despliegue de VlmHub-WEB. & \responsable & 28/09/2026 & 02/10/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A5.2} &
-\textbf{Validación de fidelidad y eficiencia.} &
-\responsable &
-15/06/2026 &
-20/11/2026 &
-\textbf{66.7\%} \\
-
+\textbf{A5.2} & \textbf{Documentación de instalación y configuración.} & \responsable & 21/07/2026 & 25/09/2026 & \textbf{100\%} \\
+\hspace{0.2cm}T5.2.1 & Redactar README, instalación, comandos, requisitos y configuración de modelos. & \responsable & 21/07/2026 & 23/07/2026 & 100\% \\
+\hspace{0.2cm}T5.2.2 & Documentar ejecución Ubuntu, conexiones, APIs, búsqueda y publicación. & \responsable & 17/08/2026 & 25/09/2026 & 100\% \\
 \addlinespace[2pt]
-\textbf{A5.3} &
-\textbf{Pruebas de estabilidad y procesamiento por lotes.} &
-\responsable &
-20/07/2026 &
-27/11/2026 &
-\textbf{60\%} \\
-
+\textbf{A5.3} & \textbf{Documentación de operación, mantenimiento y diagnóstico.} & \responsable & 21/07/2026 & -- & \textbf{63\%} \\
+\hspace{0.2cm}T5.3.1 & Documentar logs, estados, health checks, errores, respaldos y recuperación. & \responsable & 21/07/2026 & 02/10/2026 & 100\% \\
+\hspace{0.2cm}T5.3.2 & Resolver y documentar la incompatibilidad de formato detectada en VlmHub.Sync. & \responsable & 04/10/2026 & -- & 25\% \\
 \addlinespace[2pt]
-\textbf{A5.4} &
-\textbf{Documentación técnica, académica y recomendaciones.} &
-\responsable &
-21/07/2026 &
-11/12/2026 &
-\textbf{75\%} \\
-
-\addlinespace[2pt]
-\textbf{RP5} &
-\textbf{Solución validada y documentación técnica.} &
-\responsable &
-15/06/2026 &
-11/12/2026 &
-\textbf{62.9\%} \\
-
-\textbf{H5.1} &
-\textbf{Solución validada y documentada.} &
-\responsable &
-11/12/2026 &
-11/12/2026 &
-\textbf{0\%} \\
+\textbf{A5.4} & \textbf{Consolidación de la documentación técnica.} & \responsable & 27/07/2026 & -- & \textbf{73\%} \\
+\hspace{0.2cm}T5.4.1 & Redactar Hito 1, bitácoras, estado del arte e informes mensuales. & \responsable & 27/07/2026 & 30/09/2026 & 100\% \\
+\hspace{0.2cm}T5.4.2 & Consolidar informes técnicos de VlmHub, MetaGenerator, búsqueda e indexación. & \responsable & 24/08/2026 & 02/10/2026 & 100\% \\
+\hspace{0.2cm}T5.4.3 & Completar limitaciones, recomendaciones, seguridad y cierre técnico del proyecto. & \responsable & 23/09/2026 & -- & 20\% \\
+\textbf{RP5} & \textbf{Documentación técnica de los sistemas implementados.} & \responsable & 10/06/2026 & -- & \textbf{84\%} \\
+\textbf{H5.1} & \textbf{Documentación técnica consolidada.} & \responsable & -- & -- & 0\% \\
+\textbf{H5.2} & \textbf{Procedimientos de operación y continuidad documentados.} & \responsable & -- & -- & 0\% \\
 
 \end{longtable}
 
@@ -368,14 +221,20 @@ Desarrollar y validar una solución de transcripción y análisis de documentos 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.0\linewidth]{images/Gantt.png}
+    \includegraphics[width=1.0\linewidth]{images/Gantt_1.png}
+    \caption{Carta Gantt}
+    \label{fig:gantt}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Gantt_2.png}
     \caption{Carta Gantt}
     \label{fig:gantt}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.4\linewidth]{images/coloresGantt.png}
+    \includegraphics[width=0.4\linewidth]{images/Gantt_colores.png}
     \caption{Codigo de colores de Carta Gantt}
     \label{fig:colorGantt}
 \end{figure}

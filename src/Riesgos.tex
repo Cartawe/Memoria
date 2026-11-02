@@ -1,43 +1,52 @@
 \section{Gestión de Riesgos}
 \label{sec:gestion_riesgos}
 
-%La gestión de riesgos considera las condiciones que pueden afectar la interacción entre el Sistema Coordinador, los servidores MySQL y las distintas instancias de OCR Server.
+La gestión de riesgos considera las condiciones que pueden afectar la confidencialidad, integridad, disponibilidad y trazabilidad del flujo documental completo, desde la obtención de los documentos en MySQL hasta su procesamiento en los VLM Server, persistencia, postprocesamiento, indexación y búsqueda.
+
+La evaluación utiliza una escala cualitativa de probabilidad e impacto con valores \textit{Bajo}, \textit{Medio} y \textit{Alto}. La probabilidad representa la posibilidad de ocurrencia durante la operación, mientras que el impacto estima las consecuencias sobre los documentos, los resultados o la continuidad del servicio. Los riesgos deberán revisarse cuando cambien la arquitectura, los modelos, los contratos de integración o las condiciones de despliegue.
 
 \subsection{Supuestos}
 \label{subsec:supuestos}
 
 \begin{enumerate}
-    \item Los servidores MySQL se encuentran disponibles y permiten el acceso de usuarios autorizados.
-    \item Las tablas seleccionadas poseen una clave primaria y una columna que permite recuperar el documento.
-    \item Los OCR Server informan su disponibilidad, modelo activo y capacidad de procesamiento.
-    \item Existe conectividad entre el Sistema Coordinador, MySQL y los OCR Server.
-    \item Los documentos poseen formatos compatibles con alguno de los perfiles disponibles.
-    \item SQLite permite conservar el catálogo estructural y el estado de las tareas.
+    \item El servidor MySQL institucional se encuentra disponible y permite el acceso de usuarios y servicios autorizados.
+    \item Los registros documentales poseen identificadores estables y una referencia que permite recuperar el documento original.
+    \item Los VLM Server informan su disponibilidad, motor, modelo activo y capacidad de procesamiento.
+    \item Existe conectividad controlada entre el Sistema Coordinador, MySQL, los VLM Server y las aplicaciones consumidoras.
+    \item Los documentos poseen formatos compatibles con alguno de los perfiles de procesamiento disponibles.
+    \item SQLite permite conservar el estado de las tareas, sus elementos, intentos y resultados locales de control.
+    \item Los resultados exitosos pueden distinguirse de ejecuciones incompletas, fallidas o reemplazadas.
+    \item El índice conserva identificadores suficientes para relacionar cada coincidencia con su documento y página de origen.
 \end{enumerate}
 
 \subsection{Dependencias}
 \label{subsec:dependencias}
 
 \begin{enumerate}
-    \item \textbf{MySQL institucional:} proporciona los documentos, metadatos y estructuras de destino.
-    \item \textbf{OCR Server:} ejecuta el reconocimiento y análisis documental.
-    \item \textbf{Red institucional:} permite la comunicación entre los componentes.
-    \item \textbf{Recursos computacionales:} determinan la capacidad y velocidad de procesamiento.
-    \item \textbf{Modelos y bibliotecas:} permiten ejecutar los perfiles OCR configurados.
-    \item \textbf{SQLite:} mantiene el catálogo local, los servidores registrados y las tareas.
+    \item \textbf{MySQL institucional:} proporciona los documentos y metadatos de origen, recibe las transcripciones autorizadas y mantiene el índice de texto.
+    \item \textbf{VLM Server:} administra los motores y modelos que ejecutan la inferencia documental.
+    \item \textbf{SQLite:} conserva el registro histórico y el estado recuperable de las tareas del Sistema Coordinador.
+    \item \textbf{Red institucional:} permite la comunicación entre los componentes distribuidos.
+    \item \textbf{Recursos computacionales:} determinan la capacidad, concurrencia y velocidad del procesamiento.
+    \item \textbf{Modelos, motores y bibliotecas:} permiten interpretar los documentos y generar las transcripciones.
+    \item \textbf{Sistema de archivos:} almacena temporalmente documentos, páginas, resultados y logs operativos.
+    \item \textbf{Servicios de postprocesamiento e indexación:} normalizan las transcripciones y mantienen disponible el contenido consultable.
 \end{enumerate}
 
 \subsection{Restricciones}
 \label{subsec:restricciones}
 
 \begin{enumerate}
-    \item El sistema deberá funcionar con el hardware disponible en la institución.
-    \item Cada OCR Server deberá respetar su capacidad y nivel de concurrencia.
-    \item Una tarea solo podrá asignarse a servidores compatibles con el modelo requerido.
-    \item Los documentos y registros originales no deberán eliminarse ni sobrescribirse.
-    \item Toda ejecución, reasignación y reprocesamiento deberá conservar su trazabilidad.
-    \item SQLite almacenará información estructural y de control, pero no reemplazará a MySQL.
-    \item Los componentes internos de OCR Server deberán permanecer dentro de una red controlada.
+    \item El sistema deberá funcionar con el hardware y la capacidad de red disponibles en la institución.
+    \item Cada VLM Server deberá respetar su capacidad y nivel de concurrencia configurados.
+    \item Una tarea solo podrá asignarse a servidores compatibles con el motor y modelo requeridos.
+    \item Los documentos y transcripciones originales no deberán eliminarse ni sobrescribirse durante el postprocesamiento.
+    \item Toda ejecución, reasignación, reintento y reprocesamiento deberá conservar su trazabilidad.
+    \item SQLite almacenará información de control y recuperación, pero no reemplazará a MySQL como fuente institucional.
+    \item Los componentes administrativos internos de los VLM Server deberán permanecer dentro de una red controlada.
+    \item Las credenciales y secretos no deberán incorporarse al código, las respuestas ni los logs.
+    \item Solo los resultados válidos y asociados a un documento identificable podrán incorporarse al índice.
+    \item Las búsquedas y el acceso a documentos deberán respetar los permisos del usuario autenticado.
 \end{enumerate}
 
 \newpage
@@ -45,91 +54,145 @@
 \subsection{Riesgos}
 \label{subsec:riesgos}
 
-La Tabla~\ref{tab:riesgos_sistema} presenta los principales riesgos identificados y sus medidas de mitigación.
+La Tabla~\ref{tab:riesgos_sistema} presenta los principales riesgos identificados. Para cada riesgo se indica su evaluación inicial, el responsable técnico y las medidas preventivas y de contingencia. La aceptación del riesgo residual deberá realizarse después de comprobar la aplicación y eficacia de estas medidas.
 
 \renewcommand{\arraystretch}{1.2}
+\small
 
 \begin{longtable}{
-    >{\raggedright\arraybackslash}p{0.43\textwidth}
-    >{\raggedright\arraybackslash}p{0.49\textwidth}
+    >{\raggedright\arraybackslash}p{0.06\textwidth}
+    >{\raggedright\arraybackslash}p{0.25\textwidth}
+    >{\centering\arraybackslash}p{0.12\textwidth}
+    >{\raggedright\arraybackslash}p{0.37\textwidth}
 }
-\caption{Riesgos del sistema y medidas de mitigación.}
+\caption{Riesgos del sistema y medidas de tratamiento.}
 \label{tab:riesgos_sistema}\\
 
 \toprule
-\textbf{Riesgo} & \textbf{Medida de mitigación} \\
+\textbf{ID} & \textbf{Riesgo y responsable} & \textbf{Prob./ Impacto} & \textbf{Prevención y contingencia} \\
 \midrule
 \endfirsthead
 
 \toprule
-\textbf{Riesgo} & \textbf{Medida de mitigación} \\
+\textbf{ID} & \textbf{Riesgo y responsable} & \textbf{Prob./ Impacto} & \textbf{Prevención y contingencia} \\
 \midrule
 \endhead
 
 \bottomrule
 \endfoot
 
-\textbf{Indisponibilidad de un OCR Server.}
+R-01 &
+\textbf{Indisponibilidad de MySQL.} No es posible recuperar documentos, persistir resultados o consultar el índice.
 
-Una instancia puede dejar de responder durante una tarea.
-&
-Detectar su estado y reasignar los documentos pendientes a otro servidor compatible.
+\textit{Responsable: administración de base de datos y Sistema Coordinador.}
+& Medio / Alto &
+Aplicar tiempos de espera, reintentos limitados y supervisión de conectividad. Conservar localmente las tareas y resultados pendientes; al restablecerse el servicio, reanudar las lecturas o escrituras sin repetir inferencias confirmadas.
 \\
 
-\textbf{Saturación de recursos.}
+R-02 &
+\textbf{Indisponibilidad de un VLM Server.} Una instancia puede dejar de responder durante el procesamiento.
 
-La carga puede superar la memoria o capacidad de procesamiento disponible.
-&
-Limitar la concurrencia y distribuir las tareas según la carga de cada servidor.
+\textit{Responsable: orquestador y administración VLM.}
+& Medio / Medio &
+Comprobar periódicamente el estado de las instancias y limitar los tiempos de espera. Liberar la asignación fallida y reasignar los elementos pendientes a otro servidor compatible, respetando el máximo de reintentos.
 \\
 
-\textbf{Asignación incompatible.}
+R-03 &
+\textbf{Saturación de recursos.} La carga puede agotar memoria, procesamiento, espacio temporal o capacidad de red.
 
-Una tarea puede enviarse a un servidor que no dispone del modelo requerido.
-&
-Validar previamente los modelos, recursos y capacidades de cada instancia.
+\textit{Responsable: administración VLM e infraestructura.}
+& Medio / Alto &
+Limitar la concurrencia, validar el tamaño de los documentos y distribuir la carga según la capacidad informada. Pausar nuevas asignaciones, liberar recursos temporales y reanudar los elementos pendientes cuando exista capacidad.
 \\
 
-\textbf{Pérdida o duplicación de tareas.}
+R-04 &
+\textbf{Asignación o configuración incompatible.} Un documento puede enviarse a un servidor sin el motor, modelo o perfil requerido.
 
-Una interrupción puede provocar ejecuciones incompletas o repetidas.
-&
-Utilizar identificadores únicos, estados persistentes y límites de reintentos.
+\textit{Responsable: orquestador y administración VLM.}
+& Bajo / Medio &
+Validar capacidades, configuración y formatos antes del despacho. Rechazar la asignación, registrar su causa y seleccionar otra instancia compatible sin marcar el elemento como completado.
 \\
 
-\textbf{Desactualización del catálogo.}
+R-05 &
+\textbf{Pérdida, duplicación o bloqueo de tareas.} Una interrupción puede dejar elementos con estados inconsistentes o provocar ejecuciones repetidas.
 
-La estructura de MySQL puede cambiar respecto de la registrada en SQLite.
-&
-Sincronizar y validar el catálogo antes de crear o ejecutar una tarea.
+\textit{Responsable: Sistema Coordinador.}
+& Medio / Alto &
+Utilizar identificadores únicos, reservas temporales, estados persistentes y operaciones idempotentes. Al reiniciar, reconstruir el estado desde SQLite, liberar asignaciones vencidas y continuar solo los elementos pendientes o fallidos.
 \\
 
-\textbf{Resultados OCR incorrectos.}
+R-06 &
+\textbf{Transcripción incorrecta o incompleta.} La calidad del documento o del modelo puede alterar texto, tablas, fechas o identificadores.
 
-La calidad del documento o del modelo puede afectar la transcripción.
-&
-Conservar el original y permitir el reprocesamiento con otro modelo o perfil.
+\textit{Responsable: procesamiento VLM y control funcional.}
+& Alto / Alto &
+Conservar el original y el resultado por página, registrar modelo y parámetros, y aplicar validaciones de estructura y contenido. Permitir revisión y reprocesamiento con otro modelo o perfil sin sobrescribir la evidencia anterior.
 \\
 
-\textbf{Fallo al almacenar resultados.}
+R-07 &
+\textbf{Fallo al persistir resultados.} La inferencia puede finalizar, pero la escritura institucional puede quedar incompleta.
 
-Una escritura incompleta puede generar inconsistencias.
-&
-Utilizar transacciones y confirmar la persistencia antes de finalizar el documento.
+\textit{Responsable: persistencia y servicio MySQL.}
+& Medio / Alto &
+Validar el resultado, conservar una copia local y utilizar transacciones y claves idempotentes. Registrar la escritura como pendiente y reintentarla después de recuperar la conexión, sin volver a procesar el documento.
 \\
 
-\textbf{Exposición de información.}
+R-08 &
+\textbf{Pérdida o corrupción del registro local.} Una falla de disco o de SQLite puede impedir reconstruir tareas e intentos.
 
-Credenciales o servicios internos pueden ser accedidos sin autorización.
-&
-Restringir permisos, proteger las sesiones y operar dentro de una red controlada.
+\textit{Responsable: Sistema Coordinador e infraestructura.}
+& Bajo / Alto &
+Aplicar comprobaciones de integridad, respaldos periódicos y monitoreo del almacenamiento. Restaurar el último respaldo válido y reconciliarlo con los resultados persistidos antes de reanudar las tareas.
 \\
 
-\textbf{Crecimiento del almacenamiento.}
+R-09 &
+\textbf{Alteración del contenido durante el postprocesamiento.} Una regla puede eliminar información relevante o producir resultados no deterministas.
 
-Los archivos temporales, resultados y registros pueden consumir el espacio disponible.
-&
-Aplicar políticas de limpieza, respaldo y retención de información.
+\textit{Responsable: módulo de postprocesamiento.}
+& Medio / Alto &
+Mantener inmutable la transcripción original, versionar las reglas y comprobar su idempotencia con casos representativos. Reprocesar desde el resultado original con la última versión validada y reconstruir las entradas afectadas.
+\\
+
+R-10 &
+\textbf{Índice desactualizado o divergente.} El punto de control puede avanzar sin que todas las páginas queden indexadas.
+
+\textit{Responsable: Administrador de Índice.}
+& Medio / Alto &
+Actualizar en lotes idempotentes y confirmar el punto de control solo al finalizar correctamente. Informar un estado degradado cuando existan cambios pendientes y ejecutar una resincronización o reconstrucción controlada ante divergencias.
+\\
+
+R-11 &
+\textbf{Resultados de búsqueda incorrectos.} La normalización o la búsqueda aproximada puede omitir coincidencias o confundir identificadores similares.
+
+\textit{Responsable: Buscador Avanzado y control funcional.}
+& Medio / Alto &
+Tratar identificadores mediante coincidencia exacta, limitar la búsqueda aproximada a campos apropiados y evaluar perfiles con consultas reproducibles. Mostrar contexto y página para facilitar la verificación en el documento original.
+\\
+
+R-12 &
+\textbf{Exposición o acceso no autorizado.} Credenciales, documentos, transcripciones o funciones administrativas pueden quedar disponibles para usuarios sin permisos.
+
+\textit{Responsable: seguridad, infraestructura y aplicaciones web.}
+& Medio / Alto &
+Aplicar autenticación, autorización por función, gestión segura de secretos, sesiones protegidas y segmentación de red. Revocar accesos comprometidos, rotar credenciales, conservar evidencias y revisar los registros de auditoría.
+\\
+
+R-13 &
+\textbf{Crecimiento no controlado del almacenamiento.} Documentos temporales, logs, resultados e índice pueden consumir el espacio disponible.
+
+\textit{Responsable: infraestructura y servicios propietarios.}
+& Medio / Medio &
+Definir límites, retención, rotación, limpieza y alertas de capacidad. Suspender de forma controlada nuevas tareas si el espacio es insuficiente y eliminar únicamente archivos temporales o datos cuya retención haya vencido.
+\\
+
+R-14 &
+\textbf{Cambio incompatible de contratos o estructuras.} Una modificación en MySQL, la API, el formato de resultados o la configuración de modelos puede interrumpir el flujo.
+
+\textit{Responsable: responsables de integración y despliegue.}
+& Medio / Alto &
+Versionar contratos y configuraciones, validar estructuras al iniciar y ejecutar pruebas de integración antes del despliegue. Detener el componente incompatible, conservar las tareas pendientes y restaurar la última versión compatible.
 \\
 
 \end{longtable}
+
+\normalsize

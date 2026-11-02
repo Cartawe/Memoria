@@ -4,41 +4,52 @@
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{images/Contexto.png}
+    \includegraphics[width=0.9\linewidth]{images/Contexto.png}
     \caption{Diagrama de contexto del sistema propuesto.}
     \label{fig:diagrama_contexto_sistema}
 \end{figure}
 
-Como se observa en la figura \ref{fig:diagrama_contexto_sistema}, el diagrama de contexto el Sistema Coordinador concentra la interacción con los usuarios, el control de acceso y la administración documental, mientras que el Servidor OCR ejecuta el procesamiento especializado. Ambos sistemas se comunican mediante una API y utilizan la base de datos institucional para consultar y almacenar la información necesaria.
+Como se observa en el diagrama de contexto de la Figura~\ref{fig:diagrama_contexto_sistema}, la solución se organiza en torno a cuatro componentes principales: el \textbf{Sistema Coordinador}, los \textbf{Servidores VLM}, el \textbf{Sincronizador} y \textbf{DocuDigital}. Estos componentes utilizan la base de datos institucional alojada en el servidor MySQL de la Subsecretaría para consultar, registrar y actualizar la información documental.
 
-Los usuarios interactúan con el front end del Sistema Coordinador. Las solicitudes autorizadas son enviadas al Servidor OCR, cuyos resultados son registrados y posteriormente puestos a disposición del usuario.
+El \textbf{Sistema Coordinador} centraliza la administración del procesamiento documental. Su \emph{back end} incorpora los mecanismos de control de acceso y permisos, registro de operaciones, procesamiento de documentos y administración de tareas, mientras que su \emph{front end} permite a los administradores supervisar y gestionar las ejecuciones. El coordinador obtiene y modifica la información necesaria en la base de datos institucional y distribuye las solicitudes de procesamiento hacia los Servidores VLM mediante sus respectivas API.
 
-Este enfoque permite separar la lógica de gestión del procesamiento OCR, facilitando la sustitución de modelos, la administración de tareas y la adaptación del sistema a los recursos disponibles, \textbf{permitiendo la posibilidad de tener Servidores OCR en paralelo}.
+La comunicación entre el Sistema Coordinador y los Servidores VLM sigue una relación de uno a muchos, lo que permite que una instancia del coordinador gestione múltiples servidores de procesamiento en paralelo. Cada \textbf{Servidor VLM} expone una API y dispone de un servicio Linux compuesto por un daemon VLM y uno o más procesos \texttt{llama-server}. La comunicación interna se realiza mediante un \emph{Unix domain socket}, utilizado también por la interfaz de línea de comandos para administrar y diagnosticar el servicio de manera local. Esta arquitectura permite distribuir la carga, incorporar nuevos servidores y sustituir modelos o configuraciones sin modificar la lógica central de gestión.
 
+Una vez obtenidas las transcripciones, el \textbf{Sincronizador} consulta los resultados almacenados en la base de datos institucional, aplica las operaciones de postprocesamiento requeridas y actualiza el índice utilizado para la recuperación de información. De esta forma, el buscador avanzado integrado en \textbf{DocuDigital} puede consultar el contenido procesado y presentar al usuario los documentos y páginas relacionados con su búsqueda.
+
+Los usuarios finales interactúan exclusivamente con el portal web de DocuDigital, mientras que los administradores acceden a las funciones de supervisión del Sistema Coordinador y, cuando es necesario, a las herramientas de operación de los Servidores VLM. Esta separación de responsabilidades desacopla la consulta documental, la coordinación de tareas, el procesamiento mediante modelos de visión y lenguaje y la indexación de resultados, facilitando la escalabilidad, la continuidad operacional y la adaptación del sistema a los recursos computacionales disponibles.
 
 \subsection{Diagrama de Arquitectura}
 
-La arquitectura del sistema se compone de un \textbf{Sistema Coordinador}, uno o más \textbf{OCR Server}, un servidor institucional \textbf{MySQL} y una base de datos local \textbf{SQLite}, como se observa en la figura \ref{fig:arquitectura}. El Sistema Coordinador centraliza la interacción con los usuarios, la preparación de los documentos, la gestión distribuida de las tareas y la persistencia de los resultados. Los OCR Server actúan como nodos independientes de procesamiento, permitiendo ejecutar tareas en paralelo entre distintas instancias.
+La arquitectura de la solución se compone de un \textbf{Sistema Coordinador}, uno o más \textbf{Servidores VLM}, un servidor institucional \textbf{MySQL}, una base de datos local \textbf{SQLite} y los componentes asociados al postprocesamiento, la indexación y la búsqueda documental, como se observa en la Figura~\ref{fig:arquitectura}. El Sistema Coordinador concentra la preparación de los documentos, la administración de las tareas y la persistencia de los resultados. Los Servidores VLM funcionan como nodos independientes de procesamiento y permiten ejecutar documentos en paralelo.
+
+
+Dentro del Sistema Coordinador, el módulo \textbf{M1: Portal Web y Control de Acceso} proporciona la interfaz utilizada para autenticar a los usuarios, crear solicitudes de procesamiento y consultar el estado de las tareas. Las solicitudes son enviadas al módulo \textbf{M3: Preparación de Lotes Documentales}, que organiza los documentos seleccionados y valida la información requerida mediante el módulo \textbf{M2: Servicio de Conexión con MySQL}.
+
+
+Una vez validada la solicitud, el módulo M3 crea una nueva tarea y la entrega al módulo \textbf{M4: Gestión y Orquestación Distribuida de Tareas}. Este componente divide los lotes en unidades de procesamiento, administra sus estados y distribuye los documentos entre los Servidores VLM disponibles. De esta forma, una misma ejecución puede aprovechar varias instancias de procesamiento sin depender de un único servidor.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{images/Arquitectura.png}
+    \includegraphics[width=0.85\linewidth]{images/Arquitectura.png}
     \caption{Diagrama de arquitectura del sistema propuesto.}
     \label{fig:arquitectura}
 \end{figure}
 
 
+Cada Servidor VLM expone el módulo \textbf{M5: API de Integración con VLM Server}, que recibe las solicitudes del Sistema Coordinador y devuelve las respuestas generadas. El módulo \textbf{M6: Administración del Servicio VLM} controla la operación interna del servidor, incluyendo la comunicación con el servicio Linux y la administración del modelo activo. Finalmente, el módulo \textbf{M7: Procesamiento e Inferencia Documental} ejecuta el modelo configurado y genera la transcripción del documento, junto con sus tiempos, estados y posibles errores.
 
-Dentro del Sistema Coordinador, el módulo \textbf{M1: Portal Web y Control de Acceso} permite autenticar a los usuarios, solicitar nuevos procesamientos y consultar las tareas registradas. El módulo \textbf{M2: Catálogo Estructural MySQL} obtiene los metadatos del servidor institucional y mantiene en SQLite una representación actualizada de sus bases de datos, tablas y columnas. Esta información es utilizada por el portal y por los demás módulos para validar las operaciones realizadas sobre MySQL.
 
-El módulo \textbf{M3: Preparación de Lotes Documentales} recibe la solicitud de procesamiento, valida la tabla, la columna documental y el rango seleccionado, y genera una nueva tarea. La tarea es entregada al módulo \textbf{M4: Gestión y Orquestación Distribuida de Tareas}, encargado de dividir el lote en elementos individuales, registrar su estado en SQLite y distribuir los documentos entre los OCR Server disponibles.
+Los resultados son enviados nuevamente al módulo M4, que actualiza el progreso de la tarea y los entrega al módulo \textbf{M8: Persistencia y Trazabilidad de Resultados}. Este componente conserva la relación entre cada resultado y su documento de origen, registra los antecedentes operativos en SQLite y utiliza el módulo M2 para almacenar las transcripciones consolidadas en MySQL.
 
-Cada OCR Server dispone del módulo \textbf{M5: API de Integración con OCR Server}, que recibe las solicitudes del Sistema Coordinador y traduce las respuestas del servicio. El módulo \textbf{M6: Administración del Servicio OCR} controla el estado operativo, el modelo activo y la ejecución interna del servidor. Finalmente, el módulo \textbf{M7: Procesamiento e Inferencia Documental} ejecuta la transcripción del documento y devuelve el contenido reconocido, los metadatos, los tiempos de ejecución y los errores detectados.
 
-Los resultados obtenidos son enviados nuevamente al Sistema Coordinador. El módulo \textbf{M4} actualiza el progreso de la tarea y entrega los resultados al módulo \textbf{M8: Persistencia y Trazabilidad de Resultados}. Este último consulta la estructura de destino, relaciona cada resultado con su documento de origen y registra la transcripción final en MySQL sin eliminar la información original.
+SQLite mantiene el historial de procesamiento, los estados de las tareas y la información necesaria para realizar seguimiento o recuperar ejecuciones interrumpidas. MySQL actúa como fuente institucional de los documentos, almacena los resultados procesados y mantiene la información utilizada posteriormente por los mecanismos de indexación y búsqueda.
 
-SQLite mantiene el catálogo estructural, el registro de los OCR Server y el estado de las tareas, mientras que MySQL conserva los documentos originales y los resultados procesados. La utilización de múltiples OCR Server permite aumentar la capacidad de procesamiento, distribuir la carga y continuar las tareas disponibles cuando una instancia se encuentra ocupada o fuera de servicio.
 
+Después de la persistencia, el módulo \textbf{M9: Postprocesamiento} aplica las operaciones de limpieza y normalización necesarias sobre las transcripciones. El contenido resultante es utilizado por el módulo \textbf{M10: Administrador de Índice}, encargado de incorporar y actualizar la información dentro del índice textual. La actualización considera los cambios registrados en la base de datos y el último procesamiento exitoso, evitando reconstrucciones completas cuando no son necesarias.
+
+
+Finalmente, el módulo \textbf{M11: Buscador Avanzado de Documentos} consulta el índice textual y permite recuperar documentos a partir del contenido transcrito y de sus datos asociados. Los resultados mantienen la referencia al documento original y a la página correspondiente, permitiendo integrar la búsqueda con DocuDigital.
 
 \subsection{Enumeración de Módulos}
 \label{subsec:enumeracion_modulos}
@@ -51,75 +62,92 @@ SQLite mantiene el catálogo estructural, el registro de los OCR Server y el est
     \label{tab:enumeracion_modulos}
 
     \begin{tabularx}{\textwidth}{
-        >{\raggedright\arraybackslash}p{0.30\textwidth}
+        >{\raggedright\arraybackslash}p{0.34\textwidth}
         >{\raggedright\arraybackslash}X
-        >{\centering\arraybackslash}p{0.13\textwidth}
+        >{\centering\arraybackslash}p{0.12\textwidth}
     }
         \toprule
         \textbf{Módulo} & \textbf{Propósito} & \textbf{Sección} \\
         \midrule
 
-        M1: Portal web y acceso &
-        Proporcionar acceso autenticado y las vistas de operación. &
+        M1: Portal web y control de acceso &
+        Proporcionar acceso autenticado, permitir la creación de solicitudes y presentar el estado de las tareas y sus resultados. &
         \ref{subsec:modulo_m1} \\
 
-        M2: Catálogo estructural MySQL &
-        Registrar en SQLite la estructura de los servidores MySQL. &
+        M2: Servicio de conexión con MySQL &
+        Centralizar la consulta, validación y actualización de documentos y resultados en la base de datos institucional. &
         \ref{subsec:modulo_m2} \\
 
-        M3: Preparación de lotes &
-        Seleccionar y validar los registros que serán procesados. &
+        M3: Preparación de lotes documentales &
+        Validar las solicitudes, seleccionar los documentos que serán procesados y crear nuevas tareas de procesamiento. &
         \ref{subsec:modulo_m3} \\
 
-        M4: Gestión de tareas &
-        Controlar la creación, ejecución, seguimiento y reprocesamiento. &
+        M4: Gestión y orquestación distribuida de tareas &
+        Administrar el ciclo de vida de las tareas, distribuir documentos entre los Servidores VLM y controlar su progreso. &
         \ref{subsec:modulo_m4} \\
 
-        M5: API de integración OCR &
-        Comunicar el Sistema Coordinador con OCR Server. &
+        M5: API de integración con VLM Server &
+        Proporcionar la interfaz de comunicación entre el Sistema Coordinador y cada Servidor VLM. &
         \ref{subsec:modulo_m5} \\
 
-        M6: Administración del servicio OCR &
-        Controlar el daemon, los modelos, los estados y los registros técnicos. &
+        M6: Administración del servicio VLM &
+        Controlar el servicio de procesamiento, el modelo activo, los estados operativos y los registros técnicos del servidor. &
         \ref{subsec:modulo_m6} \\
 
-        M7: Procesamiento e inferencia &
-        Procesar imágenes y PDF mediante el modelo activo. &
+        M7: Procesamiento e inferencia documental &
+        Procesar imágenes y documentos PDF mediante el modelo configurado y generar sus transcripciones. &
         \ref{subsec:modulo_m7} \\
 
-        M8: Persistencia y trazabilidad &
-        Registrar los resultados y asociarlos con los documentos de origen. &
+        M8: Persistencia y trazabilidad de resultados &
+        Registrar resultados, tiempos, errores y metadatos, manteniendo su relación con los documentos de origen. &
         \ref{subsec:modulo_m8} \\
+
+        M9: Postprocesamiento &
+        Limpiar y normalizar las transcripciones antes de incorporarlas al índice de búsqueda. &
+        \ref{subsec:modulo_m9} \\
+
+        M10: Administrador de índice &
+        Crear, actualizar y mantener sincronizado el índice textual a partir de los cambios registrados en la base de datos. &
+        \ref{subsec:modulo_m10} \\
+
+        M11: Buscador avanzado de documentos &
+        Consultar el contenido indexado y recuperar documentos y páginas a partir de texto y metadatos. &
+        \ref{subsec:modulo_m11} \\
 
         \bottomrule
     \end{tabularx}
 \end{table}
 
+
 \subsection{Matriz de Requisitos Funcionales y Módulos}
 \label{subsec:matriz_requisitos_modulos}
 
-
 \begin{table}[H]
     \centering
-    \footnotesize
-    \renewcommand{\arraystretch}{1.15}
+    \scriptsize
+    \setlength{\tabcolsep}{3.5pt}
+    \renewcommand{\arraystretch}{1.2}
     \caption{Matriz de requisitos funcionales y módulos.}
     \label{tab:matriz_requisitos_modulos}
 
-    \begin{tabular}{c|cccccccc}
+    \begin{tabular}{c|ccccccccccc}
         \toprule
         \textbf{Requisito}
         & \textbf{M1} & \textbf{M2} & \textbf{M3} & \textbf{M4}
-        & \textbf{M5} & \textbf{M6} & \textbf{M7} & \textbf{M8} \\
+        & \textbf{M5} & \textbf{M6} & \textbf{M7} & \textbf{M8}
+        & \textbf{M9} & \textbf{M10} & \textbf{M11} \\
         \midrule
-        RF1 & X &   &   &   &   &   &   &   \\
-        RF2 & X &   &   &   & X & X &   &   \\
-        RF3 &   & X &   &   &   &   &   &   \\
-        RF4 & X & X & X &   &   &   &   &   \\
-        RF5 & X &   & X & X & X &   &   & X \\
-        RF6 &   &   &   &   & X & X &   &   \\
-        RF7 &   &   &   &   & X & X & X &   \\
-        RF8 &   & X &   & X &   &   &   & X \\
+
+        RF-01 & X &   &   & X &   &   &   & X &   &   &   \\
+        RF-02 &   & X & X &   &   &   &   &   &   &   &   \\
+        RF-03 &   &   & X & X & X & X &   &   &   &   &   \\
+        RF-04 &   &   &   &   & X & X & X &   &   &   &   \\
+        RF-05 & X &   &   & X & X & X &   & X &   &   &   \\
+        RF-06 &   & X &   & X &   &   &   & X &   &   &   \\
+        RF-07 &   &   &   &   &   &   &   &   & X &   &   \\
+        RF-08 &   &   &   &   &   &   &   &   & X & X &   \\
+        RF-09 &   &   &   &   &   &   &   &   &   & X & X \\
+
         \bottomrule
     \end{tabular}
 \end{table}

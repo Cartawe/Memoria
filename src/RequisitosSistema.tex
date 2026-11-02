@@ -6,57 +6,87 @@
 
 \begin{enumerate}
 
-    \item[\textbf{RF-01}] El sistema deberá permitir obtener el contenido textual
-    presente en documentos digitalizados.
+    \item[\textbf{RF-01}] El sistema deberá permitir que los usuarios autorizados
+    creen solicitudes de procesamiento y consulten el estado y los resultados de
+    las tareas registradas.
 
-    \item[\textbf{RF-02}] El sistema deberá conservar, cuando la naturaleza del
-    documento lo permita, el orden de lectura y la organización lógica de elementos
-    como títulos, párrafos, columnas y tablas.
+    \item[\textbf{RF-02}] El sistema deberá obtener y validar desde la base de datos
+    institucional los documentos seleccionados, permitiendo organizarlos en lotes
+    de procesamiento.
 
-    \item[\textbf{RF-03}] El sistema deberá transformar la información recuperada
-    en una representación procesable que permita identificar el contenido de cada
-    documento.
+    \item[\textbf{RF-03}] El Sistema Coordinador deberá crear las tareas,
+    dividirlas en unidades documentales y distribuirlas entre uno o más
+    Servidores VLM disponibles.
 
-    \item[\textbf{RF-04}] El sistema deberá generar información complementaria,
-    como metadatos y descripciones de contenido, que apoye la homogeneización,
-    indexación y búsqueda de los documentos.
+    \item[\textbf{RF-04}] Los Servidores VLM deberán procesar documentos en formato
+    de imagen o PDF y recuperar su contenido textual, conservando, cuando la
+    calidad del documento lo permita, la separación por páginas, el orden de
+    lectura y la organización de títulos, párrafos y tablas.
 
-    \item[\textbf{RF-05}] El sistema deberá admitir el análisis de documentos con
-    diferentes estructuras, condiciones de digitalización y niveles de degradación
-    visual.
+    \item[\textbf{RF-05}] El sistema deberá registrar el estado, progreso, tiempos
+    y errores de cada unidad, permitiendo reintentar fallos y recuperar tareas
+    interrumpidas sin repetir resultados válidos.
 
-    \item[\textbf{RF-06}] El proyecto deberá permitir comparar distintas
-    alternativas de procesamiento documental mediante documentos representativos
-    y criterios comunes de evaluación.
+    \item[\textbf{RF-06}] El sistema deberá persistir las transcripciones y sus
+    antecedentes de procesamiento, manteniendo la relación entre el resultado, el
+    documento original y la página correspondiente.
+
+    \item[\textbf{RF-07}] El sistema deberá limpiar y normalizar las transcripciones,
+    conservando una representación fiel del contenido y generando una versión
+    adecuada para su indexación.
+
+    \item[\textbf{RF-08}] El sistema deberá incorporar y actualizar el contenido
+    procesado en un índice textual, detectando los documentos nuevos, modificados
+    o eliminados.
+
+    \item[\textbf{RF-09}] El sistema deberá permitir búsquedas sobre el contenido
+    indexado y sus metadatos, entregando como resultado el documento, la página y
+    el contenido relacionado con la consulta.
 
 \end{enumerate}
+
 
 \subsection{Requisitos No Funcionales}
 
 \begin{enumerate}
 
-    \item[\textbf{RNF-01}] La información generada deberá mantener fidelidad
-    respecto del documento original, minimizando sustituciones, omisiones,
-    incorporaciones de contenido y alteraciones estructurales.
+    \item[\textbf{RNF-01}] Las transcripciones deberán mantener fidelidad respecto
+    del documento original, minimizando sustituciones, omisiones, repeticiones,
+    contenido no respaldado y alteraciones de su estructura.
 
-    \item[\textbf{RNF-02}] La solución deberá utilizar eficientemente la capacidad
-    de procesamiento y memoria disponible en la infraestructura institucional.
+    \item[\textbf{RNF-02}] La solución deberá utilizar de manera controlada la CPU,
+    memoria y almacenamiento disponibles, permitiendo configurar la concurrencia
+    y el tamaño de los lotes según la capacidad de la infraestructura.
 
-    \item[\textbf{RNF-03}] El sistema deberá permitir el procesamiento de un
-    volumen elevado de documentos sin comprometer su estabilidad ni la continuidad
-    operacional.
+    \item[\textbf{RNF-03}] La arquitectura deberá permitir aumentar la capacidad
+    de procesamiento mediante múltiples Servidores VLM y procesar volúmenes
+    elevados de documentos sin cargar el conjunto completo en memoria.
 
-    \item[\textbf{RNF-04}] La implementación deberá priorizar herramientas libres
-    y de código abierto que puedan ejecutarse dentro de la infraestructura
-    institucional.
+    \item[\textbf{RNF-04}] El sistema deberá mantener continuidad operacional ante
+    interrupciones o reinicios, conservando los resultados confirmados y
+    ejecutando de forma idempotente los reintentos y sincronizaciones.
 
-    \item[\textbf{RNF-05}] La selección de la alternativa de procesamiento deberá
-    considerar conjuntamente la fidelidad de los resultados, el tiempo de
-    procesamiento, el consumo de recursos y la estabilidad de ejecución.
+    \item[\textbf{RNF-05}] El acceso a las funciones administrativas y a la
+    información institucional deberá requerir autenticación, y las credenciales
+    deberán mantenerse fuera del código fuente y de los repositorios.
 
-    \item[\textbf{RNF-06}] Las comparaciones experimentales deberán ser
-    reproducibles y mantener condiciones equivalentes para los documentos,
-    configuraciones y recursos evaluados.
+    \item[\textbf{RNF-06}] La solución deberá registrar información suficiente
+    sobre tareas, documentos, páginas, servidores, modelos, tiempos y errores para
+    permitir su seguimiento, diagnóstico y auditoría.
+
+    \item[\textbf{RNF-07}] La arquitectura deberá mantener separados los
+    componentes de coordinación, procesamiento, persistencia, postprocesamiento,
+    indexación y búsqueda, permitiendo modificar modelos y configuraciones sin
+    alterar el resto de la solución.
+
+    \item[\textbf{RNF-08}] La implementación deberá ejecutarse dentro de la
+    infraestructura institucional, mantener compatibilidad con Linux, .NET y las
+    bases de datos utilizadas, y priorizar herramientas libres y de código abierto.
+
+    \item[\textbf{RNF-09}] La evaluación de modelos y configuraciones deberá ser
+    reproducible y considerar conjuntamente la fidelidad textual y estructural,
+    los tiempos de procesamiento, el consumo de recursos y la estabilidad de
+    ejecución.
 
 \end{enumerate}
 
@@ -68,17 +98,9 @@
 
 \begin{enumerate}
 
-    \item[\textbf{RA-H01}] La solución deberá poder ejecutarse utilizando la
-    infraestructura computacional disponible en la institución, caracterizada por
-    una capacidad limitada de procesamiento y memoria.
+    \item[\textbf{RA-H01}] La solución deberá poder ejecutarse utilizando la infraestructura computacional disponible en la institución, considerando sus limitaciones de capacidad de procesamiento y memoria, sin requerir obligatoriamente hardware especializado adicional.
 
-    \item[\textbf{RA-H02}] El sistema no deberá depender obligatoriamente de
-    hardware especializado que no se encuentre disponible en el entorno
-    institucional.
-
-    \item[\textbf{RA-H03}] El entorno deberá disponer de capacidad suficiente para
-    almacenar los documentos de entrada, los modelos de procesamiento y los
-    resultados generados.
+    \item[\textbf{RA-H02}] El entorno deberá disponer de capacidad de almacenamiento suficiente para los documentos de entrada, los modelos de procesamiento, los archivos temporales y los resultados generados durante la ejecución del sistema.
 
 \end{enumerate}
 
@@ -86,19 +108,14 @@
 
 \begin{enumerate}
 
-    \item[\textbf{RA-S01}] El entorno deberá admitir herramientas de procesamiento
-    de imágenes, reconocimiento textual y análisis de estructura documental.
+    \item[\textbf{RA-S01}] El entorno deberá permitir la utilización de herramientas para la extracción, limpieza, postprocesamiento e indexación del contenido textual obtenido desde los documentos.
 
-    \item[\textbf{RA-S02}] Las herramientas seleccionadas deberán ser compatibles
-    con el sistema operativo y el hardware disponible en la institución.
+    \item[\textbf{RA-S02}] Las herramientas y componentes de software seleccionados deberán ser compatibles con el sistema operativo y los recursos de hardware disponibles en la institución.
 
-    \item[\textbf{RA-S03}] El entorno deberá permitir la ejecución local de los
-    modelos y mecanismos de procesamiento seleccionados.
+    \item[\textbf{RA-S03}] El entorno deberá permitir la ejecución local de los modelos y mecanismos de procesamiento utilizados por la solución, evitando dependencias obligatorias de servicios externos para el procesamiento de los documentos.
 
-    \item[\textbf{RA-S04}] El entorno de evaluación deberá permitir registrar y
-    comparar la calidad de los resultados, los tiempos de ejecución y el consumo
-    de recursos de cada alternativa.
+    \item[\textbf{RA-S04}] El entorno deberá permitir registrar métricas asociadas al procesamiento, tales como tiempos de ejecución, uso de recursos y resultados obtenidos, con el propósito de evaluar el desempeño de las alternativas implementadas.
 
-    \item[\textbf{RA-S05}] Se deben ocupar herramientas de desarrollo utilizadas por el equipo de desarrollo de la institución.
+    \item[\textbf{RA-S05}] La solución deberá desarrollarse utilizando tecnologías, herramientas y entornos compatibles con los estándares y prácticas de desarrollo utilizados por el equipo técnico de la institución.
 
 \end{enumerate}
